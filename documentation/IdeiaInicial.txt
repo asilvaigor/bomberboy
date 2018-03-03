@@ -1,0 +1,32 @@
+Classes
+- Menu
+- Interface
+- Mapa
+	- Geração: 4 cantos vazios, blocos fixos e geração de blocos aleatoriamente
+	- Cada elemento do mapa é algum objeto (bomba, bloco destrutivel, bloco indestrutivel, powerup)
+	- Lista de bombas a parte (avaliar explosoes a cada frame)
+	- Sons (trilha sonora, bomba explodindo)
+- Jogador: Clovis, Reginaldo, Clodoaldo, Robson, cada um com características
+	- Animação
+	- Arte
+	- Status: velocidade, força da bomba, numero máximo de bomba, ...
+	- Posição, movimentação (colisão, coleta de powerups)
+- Bomba
+	- Timer
+	- Animação
+	- Range
+	- Posição
+- Powerup
+	Animação
+	Tipos (bota, foguinho, bomba)
+- Inimigo
+	- Jogador com IA - a principio nao fala sobre facil, medio e dificil
+- Animação
+
+
+- Bibliotecas: pygame, numpy, scipy
+- Divisão
+	Igor: IA + Jogador
+	Heládio: Mapa
+	Vida: Mapa
+- 30 fps
