@@ -1,6 +1,4 @@
-import pygame
-import sys
-from pygame.locals import *
+from source.core.engine.Events import *
 
 
 class Engine:
@@ -13,27 +11,25 @@ class Engine:
         """
         Set variables required for window creation.
         """
+        pygame.init()
+
         self.screen_width = 500
         self.screen_height = 700
         self.game_name = "Bomber Boy"
-        self.window_screen = None
-
-    def play(self):
-        self.start_window()
-
-        self.main_loop()
-
-    def start_window(self):
-        """
-        Creates the game play window
-        """
-        pygame.init()
         self.window_screen = pygame.display.set_mode((self.screen_height, self.screen_width), 0, 32)
+
         pygame.display.set_caption(self.game_name)
 
-    def main_loop(self):
+    def play(self):
         while True:
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
+                    quit_event()
+
+                if event.type == KEYDOWN:
+                    keydowm_event()
+
+                if event.type == KEYUP:
+                    keyup_event()
+
+            pygame.display.update()
