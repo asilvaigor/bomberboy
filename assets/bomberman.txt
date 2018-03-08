@@ -1,0 +1,13 @@
+up
+move_up1
+move_up2
+right
+move_right1
+move_right2
+down
+move_down1
+move_down2
+left
+move_left1
+move_left2
+
