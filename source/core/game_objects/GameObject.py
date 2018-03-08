@@ -9,7 +9,7 @@ class GameObject(Sprite):
 
     def __init__(self, pose):
         super().__init__()
-        self.__pose = pose
+        self._pose = pose
 
     def update(self, *args):
         pass

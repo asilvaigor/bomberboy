@@ -14,60 +14,6 @@ class Pose:
         :param psi: psi coordinate.
         """
 
-        self.__x = x
-        self.__y = y
-        self.__psi = psi
-
-    @property
-    def x(self):
-        """
-        Getter for x coordinate.
-        :return: x coordinate.
-        """
-
-        return self.__x
-
-    @x.setter
-    def x(self, value):
-        """
-        Setter for x coordinate.
-        :param value: Desired x value.
-        """
-
-        self.__x = value
-
-    @property
-    def y(self):
-        """
-        Getter for y coordinate.
-        :return: y coordinate.
-        """
-
-        return self.__y
-
-    @y.setter
-    def y(self, value):
-        """
-        Setter for y coordinate.
-        :param value: Desired y value.
-        """
-
-        self.__y = value
-
-    @property
-    def psi(self):
-        """
-        Getter for psi coordinate.
-        :return: psi coordinate.
-        """
-
-        return self.__psi
-
-    @psi.setter
-    def psi(self, value):
-        """
-        Setter for psi coordinate.
-        :param value: Desired psi value.
-        """
-
-        self.__psi = value
+        self.x = x
+        self.y = y
+        self.psi = psi
