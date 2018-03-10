@@ -4,10 +4,10 @@ import pygame.surfarray
 import cv2
 
 
-class Animation:
+class Sprite:
     def __init__(self, image_path, scenes_names_path):
         """
-        Animation sprite class. It reads an animation image sheet and associates
+        Animation sprite class. It reads a sprite image sheet and associates
         each icon with a name.
         :param image_path: Path to a .gif file with a sheet of different icons
         on the animation.
@@ -25,17 +25,19 @@ class Animation:
 
     def __generate_sprite(self):
         """
-        Analyzes connected components in the animation sheet and isolates them
-        in a dictionary of icons.
+        Analyzes connected components in the sprite sheet and isolates them in a
+        dictionary of icons by isolating each component.
         """
 
+        # Calculates connected components using opencv
         image = np.array(pygame.surfarray.pixels3d(self.__sheet))
-        occupied = np.logical_or(image[:, :, 0] != 0, np.logical_or(
-            image[:, :, 1] != 0, image[:, :, 2] != 0))
+        occupied = pygame.surfarray.pixels_alpha(self.__sheet) != 0
         connections = cv2.connectedComponents(occupied.astype(np.uint8),
                                               connectivity=8)
+        image[np.multiply(image[:, :, 0] == 0, connections[1] != 0), 0] = 1
         self.__icons = {}
 
+        # Puts them in a dict of icons
         for index in range(1, connections[0]):
             if index < len(self.__scenes) + 1:
                 component = connections[1] == index
@@ -46,9 +48,10 @@ class Animation:
                 maxj = np.max(component[1])
                 icon = image[mini:maxi, minj:maxj, :]
                 icon = pygame.surfarray.make_surface(icon)
+                icon.set_colorkey(0)
                 self.__icons[self.__scenes[index - 1]] = icon
 
-    def get_sprite(self):
+    def get_dict(self):
         """
         Getter for the dictionary of icons.
         :return: Icons dictionary.

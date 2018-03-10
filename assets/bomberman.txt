@@ -10,4 +10,16 @@ move_down2
 left
 move_left1
 move_left2
-
+die_front
+die_right
+die_up
+die_left
+die1
+die2
+die3
+die4
+die5
+die6
+win1
+win2
+win3

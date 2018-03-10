@@ -1,7 +1,7 @@
 import pygame
 from pygame.locals import *
 import sys
-from source.core.ui.Animation import Animation
+from source.core.ui.Sprite import Sprite
 
 pygame.init()
 
@@ -10,13 +10,13 @@ fpsClock = pygame.time.Clock()
 
 width = 450
 height = 330
-DISPLAYSURF = pygame.display.set_mode((width, height), 0, 32)
+display = pygame.display.set_mode((width, height), 0, 32)
 
 background = pygame.image.load('../../../../assets/background_test.png')
-animation = Animation('../../../../assets/bomberman.gif',
-                      '../../../../assets/bomberman.txt')
-animation = animation.get_sprite()
-sprite = animation['right']
+icon = Sprite('../../../../assets/bomberman.gif',
+              '../../../../assets/bomberman.txt')
+sprite = icon.get_dict()
+icon = sprite['right']
 
 posx = 0
 posy = 0
@@ -25,29 +25,29 @@ vely = 0
 
 counter = 0
 while True:
-    DISPLAYSURF.blit(background, (0, 0))
-    DISPLAYSURF.blit(sprite, (posx, posy))
+    display.blit(background, (0, 0))
+    display.blit(icon, (posx, posy))
 
     if velx == 1:
         if counter < 9:
-            sprite = animation['move_right1']
+            icon = sprite['move_right1']
         else:
-            sprite = animation['move_right2']
+            icon = sprite['move_right2']
     elif velx == -1:
         if counter < 9:
-            sprite = animation['move_left1']
+            icon = sprite['move_left1']
         else:
-            sprite = animation['move_left2']
+            icon = sprite['move_left2']
     elif vely == -1:
         if counter < 9:
-            sprite = animation['move_up1']
+            icon = sprite['move_up1']
         else:
-            sprite = animation['move_up2']
+            icon = sprite['move_up2']
     elif vely == 1:
         if counter < 9:
-            sprite = animation['move_down1']
+            icon = sprite['move_down1']
         else:
-            sprite = animation['move_down2']
+            icon = sprite['move_down2']
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -58,44 +58,44 @@ while True:
             if event.key == K_LEFT:
                 velx = -1
                 if counter < 9:
-                    sprite = animation['move_left1']
+                    icon = sprite['move_left1']
                 else:
-                    sprite = animation['move_left2']
+                    icon = sprite['move_left2']
             elif event.key == K_RIGHT:
                 velx = 1
                 if counter < 9:
-                    sprite = animation['move_right1']
+                    icon = sprite['move_right1']
                 else:
-                    sprite = animation['move_right2']
+                    icon = sprite['move_right2']
             elif event.key == K_UP:
                 vely = -1
                 if counter < 9:
-                    sprite = animation['move_up1']
+                    icon = sprite['move_up1']
                 else:
-                    sprite = animation['move_up2']
+                    icon = sprite['move_up2']
             elif event.key == K_DOWN:
                 vely = 1
                 if counter < 9:
-                    sprite = animation['move_down1']
+                    icon = sprite['move_down1']
                 else:
-                    sprite = animation['move_down2']
+                    icon = sprite['move_down2']
 
         if event.type == KEYUP:
             if event.key == K_LEFT:
                 velx = 0
-                sprite = animation['left']
+                icon = sprite['left']
             elif event.key == K_RIGHT:
                 velx = 0
-                sprite = animation['right']
+                icon = sprite['right']
             elif event.key == K_UP:
                 vely = 0
-                sprite = animation['up']
+                icon = sprite['up']
             elif event.key == K_DOWN:
                 vely = 0
-                sprite = animation['down']
+                icon = sprite['down']
 
-    posx += velx
-    posy += vely
+    posx += velx * 3
+    posy += vely * 3
 
     pygame.display.update()
     fpsClock.tick(FPS)
