@@ -1,5 +1,5 @@
 GAME_NAME = "bomberboy"
-FONT_SIZE = 35
+FONT_SIZE = 40
 
 #Display constants
 WINDOW_WIDTH = 352*2

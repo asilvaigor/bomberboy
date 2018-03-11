@@ -1,7 +1,7 @@
 from source.core.engine.Events import *
 from source.core.engine.Menu import Menu
 from source.core.utils.Constants import *
-import time
+
 
 class Engine:
     """
