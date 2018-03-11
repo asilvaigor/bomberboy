@@ -1,0 +1,7 @@
+Separar assets em subpastas:
+
+- assets
+    - animation
+    - image
+    - font
+    - ...
