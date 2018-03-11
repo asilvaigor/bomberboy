@@ -1,7 +1,7 @@
 from source.core.engine.Events import *
 from source.core.engine.Menu import Menu
 from source.core.utils.Constants import *
-
+import time
 
 class Engine:
     """
@@ -15,10 +15,8 @@ class Engine:
         """
         pygame.init()
 
-        self.screen_width = WINDOW_WIDTH
-        self.screen_height = WINDOW_HEIGHT
         self.game_name = GAME_NAME
-        self.window_screen = pygame.display.set_mode((self.screen_height, self.screen_width), 0, 32)
+        self.window_screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
         pygame.display.set_caption(self.game_name)
 
         self.state = "menu"
