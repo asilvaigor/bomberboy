@@ -15,7 +15,6 @@ class Engine:
         """
         pygame.init()
 
-        self.FPS = 30
         self.fpsClock = pygame.time.Clock()
 
         self.game_name = GAME_NAME
@@ -43,4 +42,4 @@ class Engine:
 
             pygame.display.update()
 
-            self.fpsClock.tick(self.FPS)
+            self.fpsClock.tick(MAX_FPS)
