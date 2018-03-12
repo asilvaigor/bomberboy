@@ -14,16 +14,17 @@ class GameObject:
         :param sprite_name:
         """
 
-        sprites_dir = 'assets/sprites/'
-        self.__sprite = Sprite(sprites_dir + sprite_name + '.gif',
-                               sprites_dir + sprite_name + '.txt').get_dict()
+        sprites_dir = '../../../../assets/sprites/'
+        self._sprite = Sprite(sprites_dir + sprite_name + '.gif',
+                              sprites_dir + sprite_name + '.txt').get_dict()
 
         self._pose = pose
 
-    def update(self, event, tilemap=None):
+    def update(self, event, clock, tilemap=None):
         """
         Abstract method which updates the game object intrinsic information.
         :param event: ObjectEvents variable.
+        :param clock: Pygame.time.Clock object with the game's clock.
         :param tilemap: Numpy array, optional, which contains the current map
         information.
         :return: True if the object still exists.
@@ -31,10 +32,9 @@ class GameObject:
 
         pass
 
-    def draw(self, event, display):
+    def draw(self, display):
         """
         Abstract method which updates the game object icon on the screen.
-        :param event: ObjectEvents variable.
         :param display: Pygame display object.
         """
 
