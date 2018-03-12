@@ -10,7 +10,7 @@ move_down2
 left
 move_left1
 move_left2
-die_front
+die_down
 die_right
 die_up
 die_left

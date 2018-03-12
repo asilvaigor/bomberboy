@@ -12,9 +12,9 @@ width = 450
 height = 330
 display = pygame.display.set_mode((width, height), 0, 32)
 
-background = pygame.image.load('../../../../assets/background_test.png')
-icon = Sprite('../../../../assets/bomberman.gif',
-              '../../../../assets/bomberman.txt')
+background = pygame.image.load('../../../../assets/image/background_test.png')
+icon = Sprite('../../../../assets/sprites/bomberboy_white.gif',
+              '../../../../assets/sprites/bomberboy_white.txt')
 sprite = icon.get_dict()
 icon = sprite['right']
 
