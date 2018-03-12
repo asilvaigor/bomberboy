@@ -10,12 +10,12 @@ from source.core.utils.Pose import Pose
 
 pygame.init()
 clock = pygame.time.Clock()
-display = pygame.display.set_mode(
-    (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
+display = pygame.display.set_mode((Constants.WINDOW_WIDTH,
+                                   Constants.WINDOW_HEIGHT))
 
 background = pygame.image.load('../../../../assets/image/background.png')
 background = pygame.transform.scale(
-    background, (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
+    background, (Constants.MAP_WIDTH, Constants.MAP_HEIGTH))
 
 character = Character((1, 1), 'bomberboy_white')
 character_event = CharacterEvents.STOP_DOWN
@@ -24,7 +24,7 @@ character.draw(display)
 character_velocity = np.array([0, 0])
 
 while True:
-    display.blit(background, (0, 0))
+    display.blit(background, (0, Constants.DISPLAY_HEIGTH))
 
     if character_event == CharacterEvents.INCREASE_SPEED:
         character_event = None

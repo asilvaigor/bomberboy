@@ -102,8 +102,11 @@ class Character(GameObject):
         elif self.__event == CharacterEvents.DIE:
             self.__icon = self.__die_animation.update()
 
+        # Positioning the blit according to the icon size
         display.blit(self.__icon, (self._pose.x - 0.5 * Constants.SQUARE_SIZE,
-                                   self._pose.y - Constants.SQUARE_SIZE))
+                                   self._pose.y + Constants.SQUARE_SIZE / 2 -
+                                   self.__icon.get_size()[1] +
+                                   Constants.DISPLAY_HEIGTH))
 
     def place_bomb(self):
         """
