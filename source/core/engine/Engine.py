@@ -15,6 +15,9 @@ class Engine:
         """
         pygame.init()
 
+        self.FPS = 30
+        self.fpsClock = pygame.time.Clock()
+
         self.game_name = GAME_NAME
         self.window_screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
         pygame.display.set_caption(self.game_name)
@@ -39,3 +42,5 @@ class Engine:
                     keyup_event()
 
             pygame.display.update()
+
+            self.fpsClock.tick(self.FPS)
