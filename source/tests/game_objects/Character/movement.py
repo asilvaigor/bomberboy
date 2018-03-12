@@ -1,21 +1,23 @@
+from pygame import locals
+import numpy as np
 import pygame
-from pygame.locals import *
 import sys
+
 from source.core.game_objects.Character.Character import Character
+from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
 from source.core.utils.Pose import Pose
-import numpy as np
-from source.core.utils.Constants import MAX_FPS
 
 pygame.init()
 clock = pygame.time.Clock()
+display = pygame.display.set_mode(
+    (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
 
-width = 450
-height = 330
-display = pygame.display.set_mode((width, height), 0, 32)
+background = pygame.image.load('../../../../assets/image/background.png')
+background = pygame.transform.scale(
+    background, (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
 
-background = pygame.image.load('../../../../assets/image/background_test.png')
-character = Character(Pose(0, 0), 'bomberboy_white')
+character = Character((1, 1), 'bomberboy_white')
 character_event = CharacterEvents.STOP_DOWN
 character.update(character_event, clock, np.array([]))
 character.draw(display)
@@ -24,9 +26,11 @@ character_velocity = np.array([0, 0])
 while True:
     display.blit(background, (0, 0))
 
+    if character_event == CharacterEvents.INCREASE_SPEED:
+        character_event = None
     for event in pygame.event.get():
         # Quitting game
-        if event.type == QUIT:
+        if event.type == locals.QUIT:
             pygame.quit()
             sys.exit()
 
@@ -36,36 +40,39 @@ while True:
             break
 
         # Stopping character
-        if event.type == KEYUP:
-            if event.key == K_LEFT:
+        if event.type == locals.KEYUP:
+            if event.key == locals.K_LEFT:
                 character_velocity += (1, 0)
                 character_event = CharacterEvents.STOP_LEFT
-            elif event.key == K_RIGHT:
+            elif event.key == locals.K_RIGHT:
                 character_velocity += (-1, 0)
                 character_event = CharacterEvents.STOP_RIGHT
-            elif event.key == K_UP:
+            elif event.key == locals.K_UP:
                 character_velocity += (0, 1)
                 character_event = CharacterEvents.STOP_UP
-            elif event.key == K_DOWN:
+            elif event.key == locals.K_DOWN:
                 character_velocity += (0, -1)
                 character_event = CharacterEvents.STOP_DOWN
 
         # Moving character, with adjustment to accept two keys pressed at the
         # same time.
-        if event.type == KEYDOWN:
-            if event.key == K_LEFT:
+        if event.type == locals.KEYDOWN:
+            if event.key == locals.K_LEFT:
                 character_velocity += (-1, 0)
-            elif event.key == K_RIGHT:
+            elif event.key == locals.K_RIGHT:
                 character_velocity += (1, 0)
-            elif event.key == K_UP:
+            elif event.key == locals.K_UP:
                 character_velocity += (0, -1)
-            elif event.key == K_DOWN:
+            elif event.key == locals.K_DOWN:
                 character_velocity += (0, 1)
-            elif event.key == K_q:
+            elif event.key == locals.K_q:
                 character_event = CharacterEvents.WIN
                 break
-            elif event.key == K_w:
+            elif event.key == locals.K_w:
                 character_event = CharacterEvents.DIE
+                break
+            elif event.key == locals.K_a:
+                character_event = CharacterEvents.INCREASE_SPEED
                 break
 
         if character_velocity[1] == 1:
@@ -82,4 +89,4 @@ while True:
         character.draw(display)
 
     pygame.display.update()
-    clock.tick(MAX_FPS)
+    clock.tick(Constants.MAX_FPS)

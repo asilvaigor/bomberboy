@@ -1,4 +1,6 @@
 from source.core.ui.Sprite import Sprite
+from source.core.utils import Constants
+from source.core.utils.Pose import Pose
 
 
 class GameObject:
@@ -7,10 +9,10 @@ class GameObject:
     GameObjects: BomberBoy, bomb, powerup and obstacles.
     """
 
-    def __init__(self, pose, sprite_name):
+    def __init__(self, initial_tile, sprite_name):
         """
         Default constructor for the GameObject.
-        :param pose: Initial pose for the object.
+        :param initial_tile: Initial tile coordinates for the object.
         :param sprite_name:
         """
 
@@ -18,7 +20,8 @@ class GameObject:
         self._sprite = Sprite(sprites_dir + sprite_name + '.gif',
                               sprites_dir + sprite_name + '.txt').get_dict()
 
-        self._pose = pose
+        self._pose = Pose(3 * initial_tile[0] * Constants.SQUARE_SIZE / 2,
+                          3 * initial_tile[1] * Constants.SQUARE_SIZE / 2)
 
     def update(self, event, clock, tilemap=None):
         """

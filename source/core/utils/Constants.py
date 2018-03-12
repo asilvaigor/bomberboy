@@ -3,8 +3,8 @@ FONT_SIZE = 40
 MAX_FPS = 200
 
 # Display constants
-WINDOW_WIDTH = 352 * 2
-WINDOW_HEIGHT = 480 * 2
+WINDOW_WIDTH = 480
+WINDOW_HEIGHT = 352
 SQUARE_SIZE = 32
 
 # Map unit constants
@@ -25,8 +25,8 @@ BLACK = (0, 0, 0)
 
 # Character constants
 STEPS_PER_SQUARE = 2
-INITIAL_SPEED = 2  # Nome: Speed is in squares per second.
+INITIAL_SPEED = 2.333  # Nome: Speed is in squares per second.
 SPEED_INCREMENT = 0.666
-MAX_SPEED = 10
+MAX_SPEED = 9
 INITIAL_FIRE = 2
 FIRE_INCREMENT = 1

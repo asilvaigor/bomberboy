@@ -11,15 +11,15 @@ class Character(GameObject):
     Abstract class for a BomberBoy character.
     """
 
-    def __init__(self, pose, sprite_name):
+    def __init__(self, initial_tile, sprite_name):
         """
         Default constructor for the character.
-        :param pose: Initial pose for the character.
+        :param initial_tile: Initial tile coordinates for the character.
         :param sprite_name: String to select the character sprite.
         Possibilities: white_bomberboy.
         """
 
-        super().__init__(pose, sprite_name)
+        super().__init__(initial_tile, sprite_name)
 
         self.__speed = Constants.INITIAL_SPEED
         self.__icon = self._sprite['down']
@@ -55,14 +55,16 @@ class Character(GameObject):
             if self.__speed > Constants.MAX_SPEED:
                 self.__speed = Constants.MAX_SPEED
 
+            step_frequency = Constants.STEPS_PER_SQUARE * (
+                Constants.INITIAL_SPEED + self.__speed / Constants.MAX_SPEED)
             self.__move_up_animation.set_durations(
-                1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
+                np.ones(2) / step_frequency)
             self.__move_down_animation.set_durations(
-                1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
+                np.ones(2) / step_frequency)
             self.__move_right_animation.set_durations(
-                1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
+                np.ones(2) / step_frequency)
             self.__move_left_animation.set_durations(
-                1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
+                np.ones(2) / step_frequency)
         elif event == CharacterEvents.INCREASE_BOMB:
             self.__total_bombs += 1
         elif event == CharacterEvents.INCREASE_FIRE:
@@ -100,7 +102,8 @@ class Character(GameObject):
         elif self.__event == CharacterEvents.DIE:
             self.__icon = self.__die_animation.update()
 
-        display.blit(self.__icon, (self._pose.x - 0.5, self._pose.y - 0.5))
+        display.blit(self.__icon, (self._pose.x - 0.5 * Constants.SQUARE_SIZE,
+                                   self._pose.y - Constants.SQUARE_SIZE))
 
     def place_bomb(self):
         """
@@ -128,9 +131,10 @@ class Character(GameObject):
         """
 
         # Movements
+        step_frequency = self.__speed * Constants.STEPS_PER_SQUARE
         self.__move_up_animation = Animation(
             [self._sprite['move_up1'], self._sprite['move_up2']],
-            1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
+            np.ones(2) / step_frequency)
         self.__move_down_animation = Animation(
             [self._sprite['move_down1'], self._sprite['move_down2']],
             1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))

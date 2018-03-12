@@ -1,7 +1,9 @@
+import cv2
 import numpy as np
 import pygame.image
 import pygame.surfarray
-import cv2
+
+from source.core.utils import Constants
 
 
 class Sprite:
@@ -49,6 +51,9 @@ class Sprite:
                 icon = image[mini:maxi, minj:maxj, :]
                 icon = pygame.surfarray.make_surface(icon)
                 icon.set_colorkey(0)
+                width = Constants.SQUARE_SIZE - 5
+                height = icon.get_size()[1] * width // icon.get_size()[0]
+                icon = pygame.transform.scale(icon, (width, height))
                 self.__icons[self.__scenes[index - 1]] = icon
 
     def get_dict(self):
