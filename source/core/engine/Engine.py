@@ -26,6 +26,7 @@ class Engine:
         while True:
             if self.state == "menu":
                 self.menu.draw_menu(self.window_screen)
+                self.menu.check_for_event()
 
             for event in pygame.event.get():
                 if event.type == QUIT:
