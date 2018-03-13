@@ -41,6 +41,7 @@ class Character(GameObject):
 
         if self.__die_animation.done():
             return False
+        self.__event = event
 
         if event == CharacterEvents.MOVE_UP:
             self.__move((0, -1), clock, tilemap)
@@ -56,7 +57,7 @@ class Character(GameObject):
                 self.__speed = Constants.MAX_SPEED
 
             step_frequency = Constants.STEPS_PER_SQUARE * (
-                Constants.INITIAL_SPEED + self.__speed / Constants.MAX_SPEED)
+                    Constants.INITIAL_SPEED + self.__speed / Constants.MAX_SPEED)
             self.__move_up_animation.set_durations(
                 np.ones(2) / step_frequency)
             self.__move_down_animation.set_durations(
@@ -69,8 +70,6 @@ class Character(GameObject):
             self.__total_bombs += 1
         elif event == CharacterEvents.INCREASE_FIRE:
             self.__fire += Constants.FIRE_INCREMENT
-
-        self.__event = event
 
         return True
 
@@ -172,13 +171,128 @@ class Character(GameObject):
         :param tilemap: Numpy array with the map information.
         """
 
+        tilemap = np.zeros((11, 15), dtype=np.int)
+        tilemap[0:11, 0] = Constants.UNIT_FIXED_BLOCK
+        tilemap[0:11, 14] = Constants.UNIT_FIXED_BLOCK
+        tilemap[0, 0:15] = Constants.UNIT_FIXED_BLOCK
+        tilemap[10, 0:15] = Constants.UNIT_FIXED_BLOCK
+        for i in range(2, 10, 2):
+            for j in range(2, 14, 2):
+                tilemap[i, j] = Constants.UNIT_FIXED_BLOCK
+
+        # Auxiliar variables
+        sq = Constants.SQUARE_SIZE
+        obstacles = np.array([Constants.UNIT_BLOCK, Constants.UNIT_FIXED_BLOCK,
+                              Constants.UNIT_BOMB])
+
+        x = self._pose.x
+        x_tile = int(x / sq)
+
+        # Choosing most natural movement upwards according to blocked blocks
+        y = self._pose.y + sq / 2
+        y_tile = int(y / sq)
+        if self.__event == CharacterEvents.MOVE_UP:
+            if not np.any(obstacles == tilemap[y_tile - 1, x_tile]):
+                if sq * 0.45 < x % sq < sq * 0.55:
+                    self._pose.x = (x_tile + 0.5) * sq
+                elif x % sq <= sq * 0.45:
+                    direction = (1, 0)
+                    self.__event = CharacterEvents.MOVE_RIGHT
+                else:
+                    direction = (-1, 0)
+                    self.__event = CharacterEvents.MOVE_LEFT
+            elif(not np.any(obstacles == tilemap[y_tile - 1, x_tile - 1]) and
+                 0 < x % sq < sq / 4):
+                direction = (-1, 0)
+                self.__event = CharacterEvents.MOVE_LEFT
+            elif(not np.any(obstacles == tilemap[y_tile - 1, x_tile + 1]) and
+                 3 * sq / 4 < x % sq < sq):
+                direction = (1, 0)
+                self.__event = CharacterEvents.MOVE_RIGHT
+            else:
+                direction = (0, 0)
+                self.__event = CharacterEvents.STOP_UP
+
+        # Choosing most natural movement downwards according to blocked blocks
+        y = self._pose.y - sq / 2 + 1
+        y_tile = int(y / sq)
+        if self.__event == CharacterEvents.MOVE_DOWN:
+            if not np.any(obstacles == tilemap[y_tile + 1, x_tile]):
+                if sq * 0.45 < x % sq < sq * 0.55:
+                    self._pose.x = (x_tile + 0.5) * sq
+                elif x % sq <= sq * 0.45:
+                    direction = (1, 0)
+                    self.__event = CharacterEvents.MOVE_RIGHT
+                else:
+                    direction = (-1, 0)
+                    self.__event = CharacterEvents.MOVE_LEFT
+            elif(not np.any(obstacles == tilemap[y_tile + 1, x_tile - 1]) and
+                 0 <= x % sq < sq / 4):
+                direction = (-1, 0)
+                self.__event = CharacterEvents.MOVE_LEFT
+            elif(not np.any(obstacles == tilemap[y_tile + 1, x_tile + 1]) and
+                 3 * sq / 4 < x % sq < sq):
+                direction = (1, 0)
+                self.__event = CharacterEvents.MOVE_RIGHT
+            else:
+                direction = (0, 0)
+                self.__event = CharacterEvents.STOP_DOWN
+
+        y = self._pose.y
+        y_tile = int(y / sq)
+
+        # Choosing most natural movement rightwards according to blocked blocks
+        x = self._pose.x - sq / 2
+        x_tile = int(x / sq)
+        if self.__event == CharacterEvents.MOVE_RIGHT:
+            if not np.any(obstacles == tilemap[y_tile, x_tile + 1]):
+                if sq * 0.45 < y % sq < sq * 0.55:
+                    self._pose.y = (y_tile + 0.5) * sq
+                elif y % sq <= sq * 0.45:
+                    direction = (0, 1)
+                    self.__event = CharacterEvents.MOVE_DOWN
+                else:
+                    direction = (0, -1)
+                    self.__event = CharacterEvents.MOVE_UP
+            elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile + 1]) and
+                  0 <= y % sq < sq / 4):
+                direction = (0, -1)
+                self.__event = CharacterEvents.MOVE_UP
+            elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile + 1]) and
+                  3 * sq / 4 < y % sq < sq):
+                direction = (0, 1)
+                self.__event = CharacterEvents.MOVE_DOWN
+            else:
+                direction = (0, 0)
+                self.__event = CharacterEvents.STOP_RIGHT
+
+        # Choosing most natural movement leftwards according to blocked blocks
+        x = self._pose.x + sq / 2
+        x_tile = int(x / sq)
+        if self.__event == CharacterEvents.MOVE_LEFT:
+            if not np.any(obstacles == tilemap[y_tile, x_tile - 1]):
+                if sq * 0.45 < y % sq < sq * 0.55:
+                    self._pose.y = (y_tile + 0.5) * sq
+                elif y % sq <= sq * 0.45:
+                    direction = (0, 1)
+                    self.__event = CharacterEvents.MOVE_DOWN
+                else:
+                    direction = (0, -1)
+                    self.__event = CharacterEvents.MOVE_UP
+            elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile - 1]) and
+                  0 <= y % sq < sq / 4):
+                direction = (0, -1)
+                self.__event = CharacterEvents.MOVE_UP
+            elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile - 1]) and
+                  3 * sq / 4 < y % sq < sq):
+                direction = (0, 1)
+                self.__event = CharacterEvents.MOVE_DOWN
+            else:
+                direction = (0, 0)
+                self.__event = CharacterEvents.STOP_LEFT
+
+        # Walking towards best direction
         self._pose.x += (direction[0] * self.__speed *
                          Constants.SQUARE_SIZE / clock.get_fps())
         self._pose.y += (direction[1] * self.__speed *
                          Constants.SQUARE_SIZE / clock.get_fps())
-
-        # TODO
-        # horiz_free = (math.floor(self._pose.y) + 0.333 < self._pose.y <
-        #               math.ceil(self._pose.y) - 0.333)
-        # vert_free = (math.floor(self._pose.x) + 0.333 < self._pose.x <
-        #              math.ceil(self._pose.x) - 0.333)
