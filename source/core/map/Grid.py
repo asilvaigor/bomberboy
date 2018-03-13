@@ -9,7 +9,7 @@ class Grid:
     """
 
     def __init__(self):
-        self.__row = (WINDOW_HEIGHT // SQUARE_SIZE) - 1
+        self.__row = (WINDOW_HEIGHT // SQUARE_SIZE) - 3
         self.__colum = WINDOW_WIDTH // SQUARE_SIZE
         self.__tilemap = np.zeros(shape=(self.__row, self.__colum), dtype=np.int)
         self.map_generate()
