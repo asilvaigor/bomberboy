@@ -1,6 +1,8 @@
-from source.core.engine.Events import *
-from source.core.engine.Menu import Menu
+import sys
+import pygame
+from pygame.locals import *
 from source.core.utils.Constants import *
+from source.core.engine.Menu import Menu
 
 
 class Engine:
@@ -32,13 +34,14 @@ class Engine:
 
             for event in pygame.event.get():
                 if event.type == QUIT:
-                    quit_event()
+                    pygame.quit()
+                    sys.exit()
 
                 if event.type == KEYDOWN:
-                    keydowm_event()
+                    pass
 
                 if event.type == KEYUP:
-                    keyup_event()
+                    pass
 
             pygame.display.update()
 
