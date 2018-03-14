@@ -171,15 +171,6 @@ class Character(GameObject):
         :param tilemap: Numpy array with the map information.
         """
 
-        tilemap = np.zeros((11, 15), dtype=np.int)
-        tilemap[0:11, 0] = Constants.UNIT_FIXED_BLOCK
-        tilemap[0:11, 14] = Constants.UNIT_FIXED_BLOCK
-        tilemap[0, 0:15] = Constants.UNIT_FIXED_BLOCK
-        tilemap[10, 0:15] = Constants.UNIT_FIXED_BLOCK
-        for i in range(2, 10, 2):
-            for j in range(2, 14, 2):
-                tilemap[i, j] = Constants.UNIT_FIXED_BLOCK
-
         # Auxiliar variables
         sq = Constants.SQUARE_SIZE
         obstacles = np.array([Constants.UNIT_BLOCK, Constants.UNIT_FIXED_BLOCK,

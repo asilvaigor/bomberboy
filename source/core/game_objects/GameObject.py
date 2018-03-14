@@ -1,3 +1,5 @@
+import os
+
 from source.core.ui.Sprite import Sprite
 from source.core.utils import Constants
 from source.core.utils.Pose import Pose
@@ -16,7 +18,8 @@ class GameObject:
         :param sprite_name:
         """
 
-        sprites_dir = '../../../../assets/sprites/'
+        sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
+                       '/../../../assets/sprites/')
         self._sprite = Sprite(sprites_dir + sprite_name + '.gif',
                               sprites_dir + sprite_name + '.txt').get_dict()
 

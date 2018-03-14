@@ -4,26 +4,24 @@ import pygame
 import sys
 
 from source.core.game_objects.Character.Character import Character
+from source.core.ui.Map import Map
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
 
 pygame.init()
 clock = pygame.time.Clock()
-display = pygame.display.set_mode((Constants.WINDOW_WIDTH,
-                                   Constants.WINDOW_HEIGHT))
-
-background = pygame.image.load('../../../../assets/image/background.png')
-background = pygame.transform.scale(
-    background, (Constants.MAP_WIDTH, Constants.MAP_HEIGTH))
+surface = pygame.display.set_mode((Constants.WINDOW_WIDTH,
+                                   Constants.WINDOW_HEIGHT), 0, 32)
+mapa = Map()
 
 character = Character((1, 1), 'bomberboy_white')
 character_event = CharacterEvents.STOP_DOWN
 character.update(character_event, clock, np.array([]))
-character.draw(display)
+character.draw(surface)
 character_velocity = np.array([0, 0])
 
 while True:
-    display.blit(background, (0, Constants.DISPLAY_HEIGTH))
+    mapa.draw(surface)
 
     if character_event == CharacterEvents.INCREASE_SPEED:
         character_event = None
@@ -84,8 +82,8 @@ while True:
             character_event = CharacterEvents.MOVE_LEFT
 
     # Updates and draws character
-    if character.update(character_event, clock, np.array([])):
-        character.draw(display)
+    if character.update(character_event, clock, mapa.get_grid().get_tilemap()):
+        character.draw(surface)
 
     pygame.display.update()
     clock.tick(Constants.MAX_FPS)

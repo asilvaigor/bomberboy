@@ -38,3 +38,6 @@ class Map:
 
     def update(self):
         pass
+
+    def get_grid(self):
+        return self.__grid

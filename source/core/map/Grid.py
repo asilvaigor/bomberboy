@@ -9,8 +9,8 @@ class Grid:
     """
 
     def __init__(self):
-        self.__row = (WINDOW_HEIGHT // SQUARE_SIZE) - 3
-        self.__colum = WINDOW_WIDTH // SQUARE_SIZE
+        self.__row = (MAP_HEIGTH // SQUARE_SIZE)
+        self.__colum = MAP_WIDTH // SQUARE_SIZE
         self.__tilemap = np.zeros(shape=(self.__row, self.__colum), dtype=np.int)
         self.map_generate()
 
@@ -51,6 +51,9 @@ class Grid:
     def __getattr__(self, position):
         """Returns the map created"""
         return self.__tilemap[position[0]][position[1]]
+
+    def get_tilemap(self):
+        return self.__tilemap
 
     def get_dimension(self):
         dim = (self.__row, self.__colum)
