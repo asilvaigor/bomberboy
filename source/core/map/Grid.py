@@ -22,7 +22,7 @@ class Grid:
                 if i + j <= 3 or i + j >= 23 or (j == 13 and (i == 1 or i == 2)) or (j == 12 and i == 1) or (
                         i == 11 and (j == 1 or j == 2)) or (i == 10 and j == 1):
                     self.__tilemap[i][j] = UNIT_EMPTY
-                elif (i % 2 == 0 and j % 2 == 0):
+                elif i % 2 == 0 and j % 2 == 0:
                     self.__tilemap[i][j] = UNIT_FIXED_BLOCK
                 else:
                     self.__tilemap[i][j] = UNIT_BLOCK
@@ -32,7 +32,7 @@ class Grid:
             # Defines the position of the power up
             x = random.randint(1, self.__colum - 1)
             y = random.randint(1, self.__row - 1)
-            while (self.__tilemap[y][x] != 3):
+            while self.__tilemap[y][x] != 3:
                 x = random.randint(1, self.__colum - 1)
                 y = random.randint(1, self.__row - 1)
 
@@ -43,7 +43,7 @@ class Grid:
             # Defines the position of the empty
             x = random.randint(1, self.__colum - 1)
             y = random.randint(1, self.__row - 1)
-            while (self.__tilemap[y][x] != 3):
+            while self.__tilemap[y][x] != 3:
                 x = random.randint(1, self.__colum - 1)
                 y = random.randint(1, self.__row - 1)
             self.__tilemap[y][x] = UNIT_EMPTY
