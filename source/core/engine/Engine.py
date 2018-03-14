@@ -2,7 +2,7 @@ import sys
 import pygame
 from pygame.locals import *
 from source.core.utils.Constants import *
-from source.core.engine.Menu import Menu
+from source.core.ui.Menu import Menu
 
 
 class Engine:
@@ -23,14 +23,14 @@ class Engine:
         self.window_screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
         pygame.display.set_caption(self.game_name)
 
-        self.state = "menu"
+        self.state = MENU
         self.menu = Menu()
 
     def play(self):
         while True:
-            if self.state == "menu":
-                self.menu.draw_menu(self.window_screen)
-                self.menu.check_for_event()
+            if self.state == MENU:
+                self.menu.draw(self.window_screen)
+                self.menu.update()
 
             for event in pygame.event.get():
                 if event.type == QUIT:
