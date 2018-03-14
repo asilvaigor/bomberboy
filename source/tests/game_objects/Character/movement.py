@@ -22,6 +22,15 @@ character.update(character_event, clock, np.array([]))
 character.draw(display)
 character_velocity = np.array([0, 0])
 
+tilemap = np.ones((11, 15), dtype=np.int) * Constants.UNIT_EMPTY
+tilemap[0:11, 0] = Constants.UNIT_FIXED_BLOCK
+tilemap[0:11, 14] = Constants.UNIT_FIXED_BLOCK
+tilemap[0, 0:15] = Constants.UNIT_FIXED_BLOCK
+tilemap[10, 0:15] = Constants.UNIT_FIXED_BLOCK
+for i in range(2, 10, 2):
+    for j in range(2, 14, 2):
+        tilemap[i, j] = Constants.UNIT_FIXED_BLOCK
+
 while True:
     display.blit(background, (0, Constants.DISPLAY_HEIGTH))
 
@@ -84,7 +93,7 @@ while True:
             character_event = CharacterEvents.MOVE_LEFT
 
     # Updates and draws character
-    if character.update(character_event, clock, np.array([])):
+    if character.update(character_event, clock, tilemap):
         character.draw(display)
 
     pygame.display.update()

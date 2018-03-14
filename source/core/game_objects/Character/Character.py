@@ -205,7 +205,7 @@ class Character(GameObject):
                 self.__event = CharacterEvents.STOP_UP
 
         # Choosing most natural movement downwards according to blocked blocks
-        y = self._pose.y - sq / 2 + 1
+        y = self._pose.y - sq / 2 - 1
         y_tile = int(y / sq)
         if self.__event == CharacterEvents.MOVE_DOWN:
             if not np.any(obstacles == tilemap[y_tile + 1, x_tile]):
@@ -233,7 +233,7 @@ class Character(GameObject):
         y_tile = int(y / sq)
 
         # Choosing most natural movement rightwards according to blocked blocks
-        x = self._pose.x - sq / 2
+        x = self._pose.x - sq / 2 - 1
         x_tile = int(x / sq)
         if self.__event == CharacterEvents.MOVE_RIGHT:
             if not np.any(obstacles == tilemap[y_tile, x_tile + 1]):
