@@ -30,7 +30,7 @@ class Engine:
         while True:
             if self.state == MENU:
                 self.menu.draw(self.window_screen)
-                self.menu.update()
+                self.menu.update(self.window_screen)
 
             for event in pygame.event.get():
                 if event.type == QUIT:

@@ -32,6 +32,7 @@ class Menu:
         self.__authors = self.___end_font.render("Heladio, Igor, Jose Otavio", True, RED)
 
         # Arrows
+        self.__state = "single"
         self.__right = pygame.image.load("assets/image/rightarrow.png")
         arrow_size = (int(FONT_SIZE * 1.375),
                       FONT_SIZE)
@@ -62,7 +63,10 @@ class Menu:
                                 authors_position[1] - self.__institution.get_rect().height)
         surface.blit(self.__institution, institution_position)
 
-    def update(self):
+        # Draw arrows
+        self.draw_arrow(surface)
+
+    def update(self, surface):
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
@@ -72,22 +76,34 @@ class Menu:
                 pass
 
             if event.type == KEYUP:
-                pass
+                self.change_state(event.key)
+                self.draw_arrow(surface)
 
             if event.type == K_KP_ENTER:
                 pass
 
-    def draw_arrow(self, surface, state):
+    def draw_arrow(self, surface):
         x_r = surface.get_rect().centerx - 3 * self.__right.get_rect().centerx
         y_0 = int(surface.get_rect().centery + 1.5 * FONT_SIZE)
 
-        if state == "single":
+        if self.__state == "single":
             right_position = (x_r - self.__single.get_rect().centerx, y_0)
-        elif state == "multi":
+        elif self.__state == "multi":
             right_position = (x_r - self.__multi.get_rect().centerx, y_0)
-        elif state == "tutorial":
+        elif self.__state == "tutorial":
             right_position = (x_r - self.__tutorial.get_rect().centerx, y_0)
         else:
             right_position = (x_r - self.__exit.get_rect().centerx, y_0)
 
         surface.blit(self.__right, right_position)
+
+    def change_state(self, key):
+        all_states = ["single", "multi", "tutorial", "exit"]
+        index = all_states.index(self.__state)
+        if key == K_UP:
+            index -= 1
+            index %= 4
+        if key == K_DOWN:
+            index -= 1
+            index %= 4
+        self.__state = all_states[index]
