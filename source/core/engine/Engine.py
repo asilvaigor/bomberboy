@@ -19,18 +19,22 @@ class Engine:
 
         self.fpsClock = pygame.time.Clock()
 
-        self.game_name = GAME_NAME
-        self.window_screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
-        pygame.display.set_caption(self.game_name)
+        self.__game_name = GAME_NAME
+        self.__surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+        pygame.display.set_caption(self.__game_name)
 
-        self.state = MENU
-        self.menu = Menu()
+        self.__state = MENU
+        self.__menu = Menu()
 
     def play(self):
         while True:
-            if self.state == MENU:
-                self.menu.draw(self.window_screen)
-                self.menu.update(self.window_screen)
+            if self.__state == MENU:
+                self.__menu.draw(self.__surface)
+                self.__state = self.__menu.update(self.__surface)
+
+            elif self.__state == FINISH:
+                pygame.quit()
+                sys.exit()
 
             for event in pygame.event.get():
                 if event.type == QUIT:
