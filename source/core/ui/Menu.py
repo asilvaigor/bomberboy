@@ -3,6 +3,10 @@ import pygame
 from pygame.locals import *
 from source.core.utils.Constants import *
 
+SINGLE = 0
+MULTI = 1
+EXIT = 2
+
 
 class Menu:
     """
@@ -17,7 +21,6 @@ class Menu:
         self.__menu_font = pygame.font.Font("assets/font/04B_30__.TTF", FONT_SIZE)
         self.__single = self.__menu_font.render("single player", True, RED)
         self.__multi = self.__menu_font.render("multi player", True, RED)
-        self.__tutorial = self.__menu_font.render("how to play", True, RED)
         self.__exit = self.__menu_font.render("exit", True, RED)
 
         # Set logo's image
@@ -32,9 +35,9 @@ class Menu:
         self.__authors = self.___end_font.render("Heladio, Igor, Jose Otavio", True, RED)
 
         # Arrows
-        self.__state = "single"
-        self.__right = pygame.image.load("assets/image/rightarrow.png")
-        self.__left = pygame.image.load("assets/image/rightarrow.png")
+        self.__state = SINGLE
+        self.__right = pygame.image.load("assets/image/right_arrow.png")
+        self.__left = pygame.image.load("assets/image/left_arrow.png")
         arrow_size = (int(FONT_SIZE * 1.375),
                       FONT_SIZE)
         self.__right = pygame.transform.scale(self.__right, arrow_size)
@@ -46,16 +49,16 @@ class Menu:
 
         # Draw bomber boy's logo
         logo_position = (surface.get_rect().centerx - self.__logo.get_rect().centerx,
-                         surface.get_rect().top - self.__logo.get_rect().top + int(WINDOW_HEIGHT * 0.03))
+                         surface.get_rect().top - self.__logo.get_rect().top + int(WINDOW_HEIGHT * 0.05))
         surface.blit(self.__logo, logo_position)
 
         # Draw menu buttons
-        y = int(surface.get_rect().centery + 1.5 * FONT_SIZE)
-        text = [self.__single, self.__multi, self.__tutorial, self.__exit]
+        y = int(surface.get_rect().centery + 2 * FONT_SIZE)
+        text = [self.__single, self.__multi, self.__exit]
         for t in text:
             position = (surface.get_rect().centerx - t.get_rect().centerx, y)
             surface.blit(t, position)
-            y = y + t.get_rect().height + int(WINDOW_HEIGHT * 0.03)
+            y = y + t.get_rect().height + int(WINDOW_HEIGHT * 0.05)
 
         # Draw end page text
         authors_position = (surface.get_rect().centerx - self.__authors.get_rect().centerx,
@@ -68,57 +71,45 @@ class Menu:
         # Draw arrows
         self.draw_arrow(surface)
 
-    def update(self, surface):
+    def update(self):
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
 
-            if event.type == KEYDOWN:
-                pass
-
             if event.type == KEYUP:
-                if event.key == K_KP_ENTER:
-                    if self.__state == "single":
-                        pass
-                    elif self.__state == "multi":
-                        pass
-                    elif self.__state == "tutorial":
-                        pass
-                    elif self.__state == "exit":
+                if event.key == K_RETURN or event.key == K_KP_ENTER:
+                    if self.__state == SINGLE:
+                        return PLAYING_SINGLE
+                    elif self.__state == MULTI:
+                        return PLAYING_SINGLE
+                    elif self.__state == EXIT:
                         return FINISH
-                self.change_state(event.key)
+
+                elif event.key == K_UP:
+                    self.__state -= 1
+                    self.__state %= 3
+                elif event.key == K_DOWN:
+                    self.__state += 1
+                    self.__state %= 3
+
         return MENU
 
     def draw_arrow(self, surface):
         x_r = surface.get_rect().centerx - 3 * self.__right.get_rect().centerx
         x_l = surface.get_rect().centerx + self.__right.get_rect().centerx
-        y_0 = int(surface.get_rect().centery + 1.5 * FONT_SIZE)
-        delta_y = FONT_SIZE + int(WINDOW_HEIGHT * 0.03)
+        y_0 = int(surface.get_rect().centery + 2 * FONT_SIZE)
+        delta_y = FONT_SIZE + int(WINDOW_HEIGHT * 0.05)
 
-        if self.__state == "single":
+        if self.__state == SINGLE:
             right_position = (x_r - self.__single.get_rect().centerx, y_0)
             left_position = (x_l + self.__single.get_rect().centerx, y_0)
-        elif self.__state == "multi":
+        elif self.__state == MULTI:
             right_position = (x_r - self.__multi.get_rect().centerx, y_0 + delta_y)
             left_position = (x_l + self.__multi.get_rect().centerx, y_0 + delta_y)
-        elif self.__state == "tutorial":
-            right_position = (x_r - self.__tutorial.get_rect().centerx, y_0 + 2 * delta_y)
-            left_position = (x_l + self.__tutorial.get_rect().centerx, y_0 + 2 * delta_y)
         else:
-            right_position = (x_r - self.__exit.get_rect().centerx, y_0 + 3 * delta_y)
-            left_position = (x_l + self.__exit.get_rect().centerx, y_0 + 3 * delta_y)
+            right_position = (x_r - self.__exit.get_rect().centerx, y_0 + 2 * delta_y)
+            left_position = (x_l + self.__exit.get_rect().centerx, y_0 + 2 * delta_y)
 
         surface.blit(self.__right, right_position)
         surface.blit(self.__left, left_position)
-
-    def change_state(self, key):
-        all_states = ["single", "multi", "tutorial", "exit"]
-        index = all_states.index(self.__state)
-        if key == K_UP:
-            index -= 1
-            index %= 4
-        if key == K_DOWN:
-            index += 1
-            index %= 4
-        self.__state = all_states[index]

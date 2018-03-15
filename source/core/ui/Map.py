@@ -9,11 +9,11 @@ from source.core.map.Grid import Grid
 class Map:
 
     def __init__(self):
-        self.__brick = pygame.image.load("../../../assets/image/brick.png")
-        self.__block = pygame.image.load("../../../assets/image/block.png")
-        self.__fire = pygame.image.load("../../../assets/image/fire.png")
-        self.__bomb = pygame.image.load("../../../assets/image/bomb.png")
-        self.__shoes = pygame.image.load("../../../assets/image/shoes.png")
+        self.__brick = pygame.image.load("assets/image/brick.png")
+        self.__block = pygame.image.load("assets/image/block.png")
+        self.__fire = pygame.image.load("assets/image/fire.png")
+        self.__bomb = pygame.image.load("assets/image/bomb.png")
+        self.__shoes = pygame.image.load("assets/image/shoes.png")
 
         self.__grid = Grid()
         self.__dim = self.__grid.get_dimension()
