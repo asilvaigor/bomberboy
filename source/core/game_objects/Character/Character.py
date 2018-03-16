@@ -174,7 +174,10 @@ class Character(GameObject):
         # Auxiliar variables
         sq = Constants.SQUARE_SIZE
         obstacles = np.array([Constants.UNIT_BLOCK, Constants.UNIT_FIXED_BLOCK,
-                              Constants.UNIT_BOMB])
+                              Constants.UNIT_BOMB,
+                              Constants.UNIT_POWERUP_FIRE_HIDE,
+                              Constants.UNIT_POWERUP_VELOCITY_HIDE,
+                              Constants.UNIT_POWERUP_BOMB_HIDE])
 
         x = self._pose.x
         x_tile = int(x / sq)
