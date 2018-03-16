@@ -1,0 +1,5 @@
+thinner
+thin
+normal
+large
+larger
