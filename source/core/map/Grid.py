@@ -17,10 +17,12 @@ class Grid:
     def map_generate(self):
         """Generate the initial map"""
         # Put the blocks and the fixed blocks on the map
+        self.__rowLimit = self.__row - 2
+        self.__columLimit = self.__colum - 2
         for i in range(1, self.__row - 1):
             for j in range(1, self.__colum - 1):
-                if i + j <= 3 or i + j >= 23 or (j == 13 and (i == 1 or i == 2)) or (j == 12 and i == 1) or (
-                        i == 11 and (j == 1 or j == 2)) or (i == 10 and j == 1):
+                if i + j <= 3 or i + j >= 21 or (j == self.__columLimit and (i == 1 or i == 2)) or (j == self.__columLimit -1 and i == 1)\
+                        or (i == self.__rowLimit and (j == 1 or j == 2)) or (i == self.__rowLimit - 1 and j == 1):
                     self.__tilemap[i][j] = UNIT_EMPTY
                 elif i % 2 == 0 and j % 2 == 0:
                     self.__tilemap[i][j] = UNIT_FIXED_BLOCK
@@ -58,3 +60,6 @@ class Grid:
     def get_dimension(self):
         dim = (self.__row, self.__colum)
         return dim
+
+    def update(self, position, event):
+        self.__tilemap[position[0]][position[1]] = event
