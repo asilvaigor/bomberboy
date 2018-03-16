@@ -44,3 +44,12 @@ class GameObject:
         """
 
         pass
+
+    @property
+    def pose(self):
+        """
+        Getter for the game object's pose on the map in pixels.
+        :return: Object's pose in pixels.
+        """
+
+        return self._pose

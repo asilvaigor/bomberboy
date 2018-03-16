@@ -2,7 +2,7 @@ import pygame
 import sys
 from pygame.locals import *
 
-from source.core.game_objects.Character.Character import Character
+from source.core.game_objects.Character.Player import Player
 from source.core.ui.Map import Map
 from source.core.utils import Constants
 
@@ -16,7 +16,9 @@ class Match:
                                              Constants.RED)
 
         self.__map = Map()
-        self.__player = Character((1, 1), 'bomberboy_white')
+        self.__player1_keys = {'up': K_w, 'down': K_s, 'left': K_a,
+                               'right': K_d, 'bomb': K_v}
+        self.__player = Player((1, 1), 'bomberboy_white', self.__player1_keys)
 
     def play(self, clock, surface):
         self.__map.draw(surface)
@@ -36,7 +38,12 @@ class Match:
                     self.__player.key_up(event.key)
 
             if event.type == KEYDOWN:
-                self.__player.key_down(event.key)
+                if event.key == self.__player1_keys['bomb']:
+                    if self.__player.place_bomb():
+                        # TODO: Place a bomb on the map
+                        pass
+                else:
+                    self.__player.key_down(event.key)
 
         # Updates and draws character
         if self.__player.update(clock, self.__map.get_grid().get_tilemap()):
