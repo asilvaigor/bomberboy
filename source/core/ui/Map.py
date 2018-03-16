@@ -1,6 +1,5 @@
-import sys
+import os
 import pygame
-from pygame.locals import *
 
 from source.core.utils.Constants import *
 from source.core.map.Grid import Grid
@@ -9,11 +8,13 @@ from source.core.map.Grid import Grid
 class Map:
 
     def __init__(self):
-        self.__brick = pygame.image.load("assets/image/brick.png")
-        self.__block = pygame.image.load("assets/image/block.png")
-        self.__fire = pygame.image.load("assets/image/fire.png")
-        self.__bomb = pygame.image.load("assets/image/bomb.png")
-        self.__shoes = pygame.image.load("assets/image/shoes.png")
+        image_dir = (os.path.dirname(os.path.realpath(__file__)) +
+                     '/../../../assets/image/')
+        self.__brick = pygame.image.load(image_dir + "brick.png")
+        self.__block = pygame.image.load(image_dir + "block.png")
+        self.__fire = pygame.image.load(image_dir + "fire.png")
+        self.__bomb = pygame.image.load(image_dir + "bomb.png")
+        self.__shoes = pygame.image.load(image_dir + "shoes.png")
 
         self.__grid = Grid()
         self.__dim = self.__grid.get_dimension()
