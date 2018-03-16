@@ -3,7 +3,7 @@ import pygame
 from pygame.locals import *
 from source.core.utils.Constants import *
 from source.core.ui.Menu import Menu
-from source.core.ui.Match import Match
+from source.core.engine.Match import Match
 from source.core.ui.Pause import Pause
 
 
@@ -40,8 +40,7 @@ class Engine:
                 self.__state = self.__menu.update()
 
             elif self.__state == PLAYING_SINGLE:
-                self.__match.draw(self.__surface)
-                self.__state = self.__match.update()
+                self.__state = self.__match.play(self.fpsClock, self.__surface)
 
             elif self.__state == PAUSE:
                 self.__pause.draw(self.__surface)
@@ -50,17 +49,6 @@ class Engine:
             elif self.__state == FINISH:
                 pygame.quit()
                 sys.exit()
-
-            for event in pygame.event.get():
-                if event.type == QUIT:
-                    pygame.quit()
-                    sys.exit()
-
-                if event.type == KEYDOWN:
-                    pass
-
-                if event.type == KEYUP:
-                    pass
 
             pygame.display.update()
 

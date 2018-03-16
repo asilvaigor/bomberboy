@@ -26,10 +26,9 @@ class GameObject:
         self._pose = Pose(3 * initial_tile[0] * Constants.SQUARE_SIZE / 2,
                           3 * initial_tile[1] * Constants.SQUARE_SIZE / 2)
 
-    def update(self, event, clock, tilemap=None):
+    def update(self, clock, tilemap=None):
         """
         Abstract method which updates the game object intrinsic information.
-        :param event: ObjectEvents variable.
         :param clock: Pygame.time.Clock object with the game's clock.
         :param tilemap: Numpy array, optional, which contains the current map
         information.

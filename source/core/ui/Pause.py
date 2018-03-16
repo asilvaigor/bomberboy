@@ -8,7 +8,7 @@ class Pause:
 
     def __init__(self):
         self.__menu_font = pygame.font.Font("assets/font/04B_30__.TTF", FONT_SIZE)
-        self.__msg = self.__menu_font.render("Partida pausada", True, RED)
+        self.__msg = self.__menu_font.render("Paused", True, RED)
         self.__msg_rect = self.__msg.get_rect()
 
     def draw(self, surface):
