@@ -43,11 +43,17 @@ class Match:
                     self.__player.key_up(event.key)
 
             if event.type == KEYDOWN:
-                if event.key == self.__player1_keys['bomb']:
-                    if self.__player.place_bomb():
+                # If placing bomb, check if character can place bomb and if
+                # there is not another bomb already in this tile.
+                if (event.key == self.__player1_keys['bomb'] and
+                        self.__player.place_bomb()):
+                    if self.__map.get_grid().get_tilemap()[
+                           self.__player.tile] != Constants.UNIT_BOMB:
                         self.__bombs.append(Bomb(self.__player.tile))
                         self.__map.get_grid().update(self.__player.tile,
                                                      Constants.UNIT_BOMB)
+                    else:
+                        self.__player.bomb_exploded()
                 else:
                     self.__player.key_down(event.key)
 
