@@ -40,6 +40,7 @@ class Sprite:
         self.__icons = {}
 
         # Puts them in a dict of icons
+        max_width = 0
         for index in range(1, connections[0]):
             if index < len(self.__scenes) + 1:
                 component = connections[1] == index
@@ -48,13 +49,22 @@ class Sprite:
                 maxi = np.max(component[0])
                 minj = np.min(component[1])
                 maxj = np.max(component[1])
-                icon = image[mini:maxi, minj:maxj, :]
+                icon = image[mini:maxi + 1, minj:maxj + 1, :]
                 icon = pygame.surfarray.make_surface(icon)
                 icon.set_colorkey(0)
-                width = Constants.SQUARE_SIZE - 5
-                height = icon.get_size()[1] * width // icon.get_size()[0]
-                icon = pygame.transform.scale(icon, (width, height))
+
+                if icon.get_size()[1] > max_width:
+                    max_width = icon.get_size()[0]
+
                 self.__icons[self.__scenes[index - 1]] = icon
+
+        for key in self.__icons:
+            width = int((Constants.SQUARE_SIZE - 3) *
+                        self.__icons[key].get_size()[0] / max_width)
+            height = (self.__icons[key].get_size()[1] *
+                      width // self.__icons[key].get_size()[0])
+            self.__icons[key] = pygame.transform.scale(self.__icons[key],
+                                                       (width, height))
 
     def get_dict(self):
         """

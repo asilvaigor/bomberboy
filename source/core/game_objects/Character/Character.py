@@ -25,7 +25,7 @@ class Character(GameObject):
         self.__speed = Constants.INITIAL_SPEED
         self.__icon = self._sprite['down']
         self.__placed_bombs = 0
-        self.__total_bombs = 1
+        self.__total_bombs = 10
         self.__fire = Constants.INITIAL_FIRE
         self.__event = CharacterEvents.STOP_DOWN
         self._new_event = CharacterEvents.STOP_DOWN
@@ -117,7 +117,7 @@ class Character(GameObject):
             self.__icon = self.__die_animation.update()
 
         # Positioning the blit according to the icon size
-        display.blit(self.__icon, (self._pose.x - 0.5 * Constants.SQUARE_SIZE,
+        display.blit(self.__icon, (self._pose.x - self.__icon.get_size()[0] / 2,
                                    self._pose.y + Constants.SQUARE_SIZE / 2 -
                                    self.__icon.get_size()[1] +
                                    Constants.DISPLAY_HEIGTH))
@@ -152,6 +152,17 @@ class Character(GameObject):
         self._new_event = event
         self._got_special_event = True
 
+    @property
+    def tile(self):
+        """
+        Getter for the game object's tile coordinate on the map.
+        :return: Object's coordinate.
+        """
+
+        return (int((self._pose.y + self.__icon.get_size()[1] - 3 *
+                     Constants.SQUARE_SIZE / 2 - 1) / Constants.SQUARE_SIZE),
+                int(self._pose.x / Constants.SQUARE_SIZE))
+
     def __setup_animations(self):
         """
         Sets up the character animations, creating an object for each one.
@@ -185,8 +196,7 @@ class Character(GameObject):
              self._sprite['die1'], self._sprite['die1'],
              self._sprite['die3'], self._sprite['die4'],
              self._sprite['die5'], self._sprite['die6']]])
-        die_durations = np.concatenate([np.tile(0.1, 20),
-                                        [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5]])
+        die_durations = np.concatenate([np.tile(0.1, 20), 0.5 * np.ones(7)])
         self.__die_animation = Animation(die_sprites, die_durations, stop=True)
 
     def __move(self, direction, clock, tilemap):
@@ -208,7 +218,7 @@ class Character(GameObject):
         x_tile = int(x / sq)
 
         # Choosing most natural movement upwards according to blocked blocks
-        y = self._pose.y + sq / 2
+        y = self._pose.y + sq / 2 - 2
         y_tile = int(y / sq)
         if self.__event == CharacterEvents.MOVE_UP:
             if not np.any(obstacles == tilemap[y_tile - 1, x_tile]):
@@ -233,7 +243,7 @@ class Character(GameObject):
                 self.__event = CharacterEvents.STOP_UP
 
         # Choosing most natural movement downwards according to blocked blocks
-        y = self._pose.y - sq / 2 - 1
+        y = self._pose.y - sq / 2
         y_tile = int(y / sq)
         if self.__event == CharacterEvents.MOVE_DOWN:
             if not np.any(obstacles == tilemap[y_tile + 1, x_tile]):
@@ -261,7 +271,7 @@ class Character(GameObject):
         y_tile = int(y / sq)
 
         # Choosing most natural movement rightwards according to blocked blocks
-        x = self._pose.x - sq / 2 - 1
+        x = self._pose.x - sq / 2
         x_tile = int(x / sq)
         if self.__event == CharacterEvents.MOVE_RIGHT:
             if not np.any(obstacles == tilemap[y_tile, x_tile + 1]):
@@ -286,7 +296,7 @@ class Character(GameObject):
                 self.__event = CharacterEvents.STOP_RIGHT
 
         # Choosing most natural movement leftwards according to blocked blocks
-        x = self._pose.x + sq / 2
+        x = self._pose.x + sq / 2 - 1
         x_tile = int(x / sq)
         if self.__event == CharacterEvents.MOVE_LEFT:
             if not np.any(obstacles == tilemap[y_tile, x_tile - 1]):

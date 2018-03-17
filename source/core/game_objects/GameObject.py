@@ -20,11 +20,11 @@ class GameObject:
 
         sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
                        '/../../../assets/sprites/')
-        self._sprite = Sprite(sprites_dir + sprite_name + '.gif',
+        self._sprite = Sprite(sprites_dir + sprite_name + '.png',
                               sprites_dir + sprite_name + '.txt').get_dict()
 
-        self._pose = Pose(3 * initial_tile[0] * Constants.SQUARE_SIZE / 2,
-                          3 * initial_tile[1] * Constants.SQUARE_SIZE / 2)
+        self._pose = Pose((2 * initial_tile[1] + 1) * Constants.SQUARE_SIZE / 2,
+                          (2 * initial_tile[0] + 1) * Constants.SQUARE_SIZE / 2)
 
     def update(self, clock, tilemap=None):
         """
@@ -53,3 +53,13 @@ class GameObject:
         """
 
         return self._pose
+
+    @property
+    def tile(self):
+        """
+        Getter for the game object's tile coordinate on the map.
+        :return: Object's coordinate.
+        """
+
+        return (int(self._pose.y / Constants.SQUARE_SIZE),
+                int(self._pose.x / Constants.SQUARE_SIZE))

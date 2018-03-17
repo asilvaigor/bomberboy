@@ -3,11 +3,11 @@ from pygame import time
 
 class Animation:
     """
-    Class which represents an animation, i.e. it runs a list of sprites with a
+    Class which represents an animation, i.e. it runs a list of keyframes with a
     duration for each one.
     """
 
-    def __init__(self, icons_list, durations, stop=False):
+    def __init__(self, keyframe_list, durations, stop=False):
         """
         Default constructor, which stores each icon of the sprite and its
         duration.
@@ -16,7 +16,7 @@ class Animation:
         the animation must start at a specific icon or if the game object will
         not be deleted after the animation, but I (@igor) dont think this will
         happen in the game.
-        :param icons_list: List of pygame.image's with each icon in the
+        :param keyframe_list: List of pygame.image's with each keyframe of the
         animation in order.
         :param durations: List of time duration for each icon in seconds.
         :param stop: Bool which chooses a looping animation or one that has an
@@ -24,7 +24,7 @@ class Animation:
         icons, activating the done() method.
         """
 
-        self.__icons = icons_list
+        self.__keyframes = keyframe_list
         self.__durations = durations
         self.__stop = stop
         self.__done = False
@@ -35,7 +35,7 @@ class Animation:
     def update(self):
         """
         Updates the animation icon according to the durations and elapsed time.
-        :return: Icon the animation is currently in.
+        :return: Keyframe the animation is currently in.
         """
 
         if (self.__current_id == -1 or
@@ -50,7 +50,7 @@ class Animation:
             else:
                 self.__done = True
 
-        return self.__icons[self.__current_id]
+        return self.__keyframes[self.__current_id]
 
     def set_durations(self, durations):
         """

@@ -3,7 +3,7 @@ import numpy as np
 import pygame
 import sys
 
-from source.core.game_objects.Character.Character import Character
+from source.core.game_objects.Character.Player import Player
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
 
@@ -16,7 +16,9 @@ background = pygame.image.load('../../../../assets/image/background.png')
 background = pygame.transform.scale(
     background, (Constants.MAP_WIDTH, Constants.MAP_HEIGTH))
 
-character = Character((1, 1), 'bomberboy_white')
+player = Player((1, 1), 'bomberboy_white', {
+    'up': locals.K_UP, 'down': locals.K_DOWN, 'left': locals.K_LEFT,
+    'right': locals.K_RIGHT})
 
 tilemap = np.ones((11, 15), dtype=np.int) * Constants.UNIT_EMPTY
 tilemap[0:11, 0] = Constants.UNIT_FIXED_BLOCK
@@ -36,21 +38,21 @@ while True:
             sys.exit()
 
         if event.type == locals.KEYUP:
-            character.key_up(event.key)
+            player.key_up(event.key)
 
         if event.type == locals.KEYDOWN:
             if event.key == locals.K_q:
-                character.special_event(CharacterEvents.WIN)
+                player.special_event(CharacterEvents.WIN)
             elif event.key == locals.K_w:
-                character.special_event(CharacterEvents.DIE)
+                player.special_event(CharacterEvents.DIE)
             elif event.key == locals.K_a:
-                character.special_event(CharacterEvents.INCREASE_SPEED)
+                player.special_event(CharacterEvents.INCREASE_SPEED)
             else:
-                character.key_down(event.key)
+                player.key_down(event.key)
 
     # Updates and draws character
-    if character.update(clock, tilemap):
-        character.draw(display)
+    if player.update(clock, tilemap):
+        player.draw(display)
 
     pygame.display.update()
     clock.tick(Constants.MAX_FPS)
