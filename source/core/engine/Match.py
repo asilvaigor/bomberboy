@@ -57,6 +57,7 @@ class Match:
                 bomb.draw(surface)
             else:
                 # TODO: Bomb exploded!
+                self.__player.bomb_exploded()
                 self.__bombs.remove(bomb)
                 self.__map.get_grid().update(bomb.tile, Constants.UNIT_EMPTY)
 

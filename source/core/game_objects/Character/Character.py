@@ -25,7 +25,7 @@ class Character(GameObject):
         self.__speed = Constants.INITIAL_SPEED
         self.__icon = self._sprite['down']
         self.__placed_bombs = 0
-        self.__total_bombs = 10
+        self.__total_bombs = 1
         self.__fire = Constants.INITIAL_FIRE
         self.__event = CharacterEvents.STOP_DOWN
         self._new_event = CharacterEvents.STOP_DOWN
@@ -209,10 +209,10 @@ class Character(GameObject):
         # Auxiliar variables
         sq = Constants.SQUARE_SIZE
         obstacles = np.array([Constants.UNIT_BLOCK, Constants.UNIT_FIXED_BLOCK,
-                              Constants.UNIT_BOMB,
                               Constants.UNIT_POWERUP_FIRE_HIDE,
                               Constants.UNIT_POWERUP_VELOCITY_HIDE,
                               Constants.UNIT_POWERUP_BOMB_HIDE])
+        bomb = Constants.UNIT_BOMB
 
         x = self._pose.x
         x_tile = int(x / sq)
@@ -221,7 +221,9 @@ class Character(GameObject):
         y = self._pose.y + sq / 2 - 2
         y_tile = int(y / sq)
         if self.__event == CharacterEvents.MOVE_UP:
-            if not np.any(obstacles == tilemap[y_tile - 1, x_tile]):
+            if not np.any(obstacles == tilemap[y_tile - 1, x_tile]) and (
+                    tilemap[y_tile - 1, x_tile] != bomb or
+                    tilemap[self.tile] == bomb):
                 if sq * 0.45 < x % sq < sq * 0.55:
                     self._pose.x = (x_tile + 0.5) * sq
                 elif x % sq <= sq * 0.45:
@@ -231,11 +233,14 @@ class Character(GameObject):
                     direction = (-1, 0)
                     self.__event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile - 1]) and
-                  0 < x % sq < sq / 4):
+                  0 < x % sq < sq / 4 and (tilemap[y_tile - 1, x_tile - 1] !=
+                                           bomb or tilemap[self.tile] == bomb)):
                 direction = (-1, 0)
                 self.__event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile + 1]) and
-                  3 * sq / 4 < x % sq < sq):
+                  3 * sq / 4 < x % sq < sq and (
+                          tilemap[y_tile - 1, x_tile + 1] != bomb or
+                          tilemap[self.tile] == bomb)):
                 direction = (1, 0)
                 self.__event = CharacterEvents.MOVE_RIGHT
             else:
@@ -246,7 +251,9 @@ class Character(GameObject):
         y = self._pose.y - sq / 2
         y_tile = int(y / sq)
         if self.__event == CharacterEvents.MOVE_DOWN:
-            if not np.any(obstacles == tilemap[y_tile + 1, x_tile]):
+            if not np.any(obstacles == tilemap[y_tile + 1, x_tile]) and (
+                    tilemap[y_tile + 1, x_tile] != bomb or
+                    tilemap[self.tile] == bomb):
                 if sq * 0.45 < x % sq < sq * 0.55:
                     self._pose.x = (x_tile + 0.5) * sq
                 elif x % sq <= sq * 0.45:
@@ -256,11 +263,15 @@ class Character(GameObject):
                     direction = (-1, 0)
                     self.__event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile - 1]) and
-                  0 <= x % sq < sq / 4):
+                  0 <= x % sq < sq / 4 and (
+                          tilemap[y_tile + 1, x_tile - 1] != bomb or
+                          tilemap[self.tile] == bomb)):
                 direction = (-1, 0)
                 self.__event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile + 1]) and
-                  3 * sq / 4 < x % sq < sq):
+                  3 * sq / 4 < x % sq < sq and (
+                          tilemap[y_tile + 1, x_tile + 1] != bomb or
+                          tilemap[self.tile] == bomb)):
                 direction = (1, 0)
                 self.__event = CharacterEvents.MOVE_RIGHT
             else:
@@ -274,7 +285,9 @@ class Character(GameObject):
         x = self._pose.x - sq / 2
         x_tile = int(x / sq)
         if self.__event == CharacterEvents.MOVE_RIGHT:
-            if not np.any(obstacles == tilemap[y_tile, x_tile + 1]):
+            if not np.any(obstacles == tilemap[y_tile, x_tile + 1]) and (
+                    tilemap[y_tile, x_tile + 1] != bomb or
+                    tilemap[self.tile] == bomb):
                 if sq * 0.45 < y % sq < sq * 0.55:
                     self._pose.y = (y_tile + 0.5) * sq
                 elif y % sq <= sq * 0.45:
@@ -284,11 +297,15 @@ class Character(GameObject):
                     direction = (0, -1)
                     self.__event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile + 1]) and
-                  0 <= y % sq < sq / 4):
+                  0 <= y % sq < sq / 4 and (
+                          tilemap[y_tile - 1, x_tile + 1] != bomb or
+                          tilemap[self.tile] == bomb)):
                 direction = (0, -1)
                 self.__event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile + 1]) and
-                  3 * sq / 4 < y % sq < sq):
+                  3 * sq / 4 < y % sq < sq and (
+                          tilemap[y_tile + 1, x_tile + 1] != bomb or
+                          tilemap[self.tile] == bomb)):
                 direction = (0, 1)
                 self.__event = CharacterEvents.MOVE_DOWN
             else:
@@ -296,10 +313,12 @@ class Character(GameObject):
                 self.__event = CharacterEvents.STOP_RIGHT
 
         # Choosing most natural movement leftwards according to blocked blocks
-        x = self._pose.x + sq / 2 - 1
+        x = self._pose.x + sq / 2 - 2
         x_tile = int(x / sq)
         if self.__event == CharacterEvents.MOVE_LEFT:
-            if not np.any(obstacles == tilemap[y_tile, x_tile - 1]):
+            if not np.any(obstacles == tilemap[y_tile, x_tile - 1]) and (
+                    tilemap[y_tile, x_tile - 1] != bomb or
+                    tilemap[self.tile] == bomb):
                 if sq * 0.45 < y % sq < sq * 0.55:
                     self._pose.y = (y_tile + 0.5) * sq
                 elif y % sq <= sq * 0.45:
@@ -309,11 +328,15 @@ class Character(GameObject):
                     direction = (0, -1)
                     self.__event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile - 1]) and
-                  0 <= y % sq < sq / 4):
+                  0 <= y % sq < sq / 4 and (
+                          tilemap[y_tile - 1, x_tile - 1] != bomb or
+                          tilemap[self.tile] == bomb)):
                 direction = (0, -1)
                 self.__event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile - 1]) and
-                  3 * sq / 4 < y % sq < sq):
+                  3 * sq / 4 < y % sq < sq and (
+                          tilemap[y_tile + 1, x_tile - 1] != bomb or
+                          tilemap[self.tile] == bomb)):
                 direction = (0, 1)
                 self.__event = CharacterEvents.MOVE_DOWN
             else:
