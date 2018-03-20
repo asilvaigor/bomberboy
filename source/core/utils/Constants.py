@@ -43,6 +43,7 @@ FIRE_INCREMENT = 1
 
 # Bomb constants
 BOMB_FRAME_DURATION = 0.25
+FIRE_FRAME_DURATION = 0.075
 
 # Game state
 MENU = 0

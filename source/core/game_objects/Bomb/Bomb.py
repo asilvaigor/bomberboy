@@ -1,7 +1,9 @@
 import numpy as np
+import os
 
 from source.core.game_objects.GameObject import GameObject
 from source.core.ui.Animation import Animation
+from source.core.ui.Sprite import Sprite
 from source.core.utils import Constants
 
 
@@ -10,29 +12,38 @@ class Bomb(GameObject):
     Represents a Bomb object.
     """
 
-    def __init__(self, initial_tile):
+    def __init__(self, initial_tile, range):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
         """
 
-        super().__init__(initial_tile, 'bomb')
+        super().__init__(initial_tile)
+
+        sprite_name = 'bomb'
+        sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
+                       '/../../../../assets/sprites/')
+        self.__sprite = Sprite(sprites_dir + sprite_name + '.png',
+                               sprites_dir + sprite_name + '.txt', -2).get_dict()
 
         self.__setup_animation()
         self.__force_explosion = False
-        self.__icon = self._sprite['small']
+        self.__icon = self.__animation.update()
+        self.__range = range
 
-    def update(self, clock=None, tilemap=None):
+    def update(self, clock, tilemap):
         """
-        Updates the character according to its intrinsic status.
+        Updates the bomb according to its intrinsic status.
         :param clock: Pygame.time.Clock object with the game's clock.
         :param tilemap: Numpy array with the map information.
         :return: True if the bomb has not exploded yet.
         """
 
         if self.__animation.done() or self.__force_explosion:
+            tilemap[self.tile] = Constants.UNIT_EMPTY
             return False
 
+        tilemap[self.tile] = Constants.UNIT_BOMB
         return True
 
     def draw(self, display):
@@ -57,14 +68,23 @@ class Bomb(GameObject):
 
         self.__force_explosion = True
 
+    @property
+    def range(self):
+        """
+        Getter fot the bomb's range in tiles.
+        :return: Bomb's range.
+        """
+
+        return self.__range
+
     def __setup_animation(self):
         """
         Sets up the bomb's animations, creating an object for it.
         """
 
         self.__animation = Animation([
-            self._sprite['small'], self._sprite['normal'], self._sprite['big'],
-            self._sprite['normal'], self._sprite['small'],
-            self._sprite['normal'], self._sprite['big'], self._sprite['normal'],
-            self._sprite['small']], Constants.BOMB_FRAME_DURATION * np.ones(9),
+            self.__sprite['small'], self.__sprite['normal'], self.__sprite['big'],
+            self.__sprite['normal'], self.__sprite['small'],
+            self.__sprite['normal'], self.__sprite['big'], self.__sprite['normal'],
+            self.__sprite['small']], Constants.BOMB_FRAME_DURATION * np.ones(9),
             stop=True)

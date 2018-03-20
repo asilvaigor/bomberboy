@@ -1,8 +1,9 @@
 import numpy as np
-from pygame import locals
+import os
 
 from source.core.game_objects.GameObject import GameObject
 from source.core.ui.Animation import Animation
+from source.core.ui.Sprite import Sprite
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
 
@@ -20,10 +21,15 @@ class Character(GameObject):
         Possibilities: white_bomberboy.
         """
 
-        super().__init__(initial_tile, sprite_name)
+        super().__init__(initial_tile)
+
+        sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
+                       '/../../../../assets/sprites/')
+        self.__sprite = Sprite(sprites_dir + sprite_name + '.png',
+                               sprites_dir + sprite_name + '.txt', -3).get_dict()
 
         self.__speed = Constants.INITIAL_SPEED
-        self.__icon = self._sprite['down']
+        self.__icon = self.__sprite['down']
         self.__placed_bombs = 0
         self.__total_bombs = 1
         self.__fire = Constants.INITIAL_FIRE
@@ -98,19 +104,19 @@ class Character(GameObject):
         if self.__event == CharacterEvents.MOVE_UP:
             self.__icon = self.__move_up_animation.update()
         elif self.__event == CharacterEvents.STOP_UP:
-            self.__icon = self._sprite['up']
+            self.__icon = self.__sprite['up']
         elif self.__event == CharacterEvents.MOVE_DOWN:
             self.__icon = self.__move_down_animation.update()
         elif self.__event == CharacterEvents.STOP_DOWN:
-            self.__icon = self._sprite['down']
+            self.__icon = self.__sprite['down']
         elif self.__event == CharacterEvents.MOVE_LEFT:
             self.__icon = self.__move_left_animation.update()
         elif self.__event == CharacterEvents.STOP_LEFT:
-            self.__icon = self._sprite['left']
+            self.__icon = self.__sprite['left']
         elif self.__event == CharacterEvents.MOVE_RIGHT:
             self.__icon = self.__move_right_animation.update()
         elif self.__event == CharacterEvents.STOP_RIGHT:
-            self.__icon = self._sprite['right']
+            self.__icon = self.__sprite['right']
         elif self.__event == CharacterEvents.WIN:
             self.__icon = self.__win_animation.update()
         elif self.__event == CharacterEvents.DIE:
@@ -155,13 +161,22 @@ class Character(GameObject):
     @property
     def tile(self):
         """
-        Getter for the game object's tile coordinate on the map.
-        :return: Object's coordinate.
+        Getter for the character's tile coordinate on the map.
+        :return: Character's coordinate.
         """
 
         return (int((self._pose.y + self.__icon.get_size()[1] - 3 *
                      Constants.SQUARE_SIZE / 2 - 1) / Constants.SQUARE_SIZE),
                 int(self._pose.x / Constants.SQUARE_SIZE))
+
+    @property
+    def fire_range(self):
+        """
+        Getter for the character's fire range in tiles.
+        :return: Character's fire range.
+        """
+
+        return self.__fire
 
     def __setup_animations(self):
         """
@@ -171,31 +186,31 @@ class Character(GameObject):
         # Movements
         step_frequency = self.__speed * Constants.STEPS_PER_SQUARE
         self.__move_up_animation = Animation(
-            [self._sprite['move_up1'], self._sprite['move_up2']],
+            [self.__sprite['move_up1'], self.__sprite['move_up2']],
             np.ones(2) / step_frequency)
         self.__move_down_animation = Animation(
-            [self._sprite['move_down1'], self._sprite['move_down2']],
+            [self.__sprite['move_down1'], self.__sprite['move_down2']],
             1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
         self.__move_right_animation = Animation(
-            [self._sprite['move_right1'], self._sprite['move_right2']],
+            [self.__sprite['move_right1'], self.__sprite['move_right2']],
             1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
         self.__move_left_animation = Animation(
-            [self._sprite['move_left1'], self._sprite['move_left2']],
+            [self.__sprite['move_left1'], self.__sprite['move_left2']],
             1 / (self.__speed * Constants.STEPS_PER_SQUARE * np.ones(2)))
 
         # Winning
         self.__win_animation = Animation([
-            self._sprite['win1'], self._sprite['win2'],
-            self._sprite['win3']], np.array([0.25, 0.25, 0.5]))
+            self.__sprite['win1'], self.__sprite['win2'],
+            self.__sprite['win3']], np.array([0.25, 0.25, 0.5]))
 
         # Dying: The character spins 5 times than falls on the ground.
         die_sprites = np.concatenate([np.tile(
-            [self._sprite['die_down'], self._sprite['die_right'],
-             self._sprite['die_up'], self._sprite['die_left']], 5),
-            [self._sprite['die_down'],
-             self._sprite['die1'], self._sprite['die1'],
-             self._sprite['die3'], self._sprite['die4'],
-             self._sprite['die5'], self._sprite['die6']]])
+            [self.__sprite['die_down'], self.__sprite['die_right'],
+             self.__sprite['die_up'], self.__sprite['die_left']], 5),
+            [self.__sprite['die_down'],
+             self.__sprite['die1'], self.__sprite['die1'],
+             self.__sprite['die3'], self.__sprite['die4'],
+             self.__sprite['die5'], self.__sprite['die6']]])
         die_durations = np.concatenate([np.tile(0.1, 20), 0.5 * np.ones(7)])
         self.__die_animation = Animation(die_sprites, die_durations, stop=True)
 

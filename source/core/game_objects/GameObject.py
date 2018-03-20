@@ -1,6 +1,3 @@
-import os
-
-from source.core.ui.Sprite import Sprite
 from source.core.utils import Constants
 from source.core.utils.Pose import Pose
 
@@ -11,22 +8,16 @@ class GameObject:
     GameObjects: BomberBoy, bomb, powerup and obstacles.
     """
 
-    def __init__(self, initial_tile, sprite_name):
+    def __init__(self, initial_tile):
         """
         Default constructor for the GameObject.
         :param initial_tile: Initial tile coordinates for the object.
-        :param sprite_name:
         """
-
-        sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
-                       '/../../../assets/sprites/')
-        self._sprite = Sprite(sprites_dir + sprite_name + '.png',
-                              sprites_dir + sprite_name + '.txt').get_dict()
 
         self._pose = Pose((2 * initial_tile[1] + 1) * Constants.SQUARE_SIZE / 2,
                           (2 * initial_tile[0] + 1) * Constants.SQUARE_SIZE / 2)
 
-    def update(self, clock, tilemap=None):
+    def update(self, clock, tilemap):
         """
         Abstract method which updates the game object intrinsic information.
         :param clock: Pygame.time.Clock object with the game's clock.

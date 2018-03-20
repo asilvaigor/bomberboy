@@ -4,9 +4,11 @@ import os
 from pygame.locals import *
 
 from source.core.game_objects.Bomb.Bomb import Bomb
+from source.core.game_objects.Bomb.Fire import Fire
 from source.core.game_objects.Character.Player import Player
 from source.core.ui.Map import Map
 from source.core.utils import Constants
+from source.core.utils.ObjectEvents import CharacterEvents
 
 
 class Match:
@@ -24,6 +26,7 @@ class Match:
                                'right': K_d, 'bomb': K_v}
         self.__player = Player((1, 1), 'bomberboy_white', self.__player1_keys)
         self.__bombs = list()
+        self.__fires = list()
 
     def play(self, clock, surface):
         self.__map.draw(surface)
@@ -49,9 +52,8 @@ class Match:
                         self.__player.place_bomb()):
                     if self.__map.get_grid().get_tilemap()[
                            self.__player.tile] != Constants.UNIT_BOMB:
-                        self.__bombs.append(Bomb(self.__player.tile))
-                        self.__map.get_grid().update(self.__player.tile,
-                                                     Constants.UNIT_BOMB)
+                        self.__bombs.append(Bomb(self.__player.tile,
+                                                 self.__player.fire_range))
                     else:
                         self.__player.bomb_exploded()
                 else:
@@ -59,16 +61,26 @@ class Match:
 
         # Updates and draws bombs
         for bomb in self.__bombs:
-            if bomb.update():
+            if bomb.update(clock, self.__map.get_grid().get_tilemap()):
                 bomb.draw(surface)
             else:
-                # TODO: Bomb exploded!
+                self.__fires.append(Fire(bomb.tile, bomb.range))
                 self.__player.bomb_exploded()
                 self.__bombs.remove(bomb)
-                self.__map.get_grid().update(bomb.tile, Constants.UNIT_EMPTY)
+
+        # Updates and draws fires
+        for fire in self.__fires:
+            if fire.update(clock, self.__map.get_grid().get_tilemap()):
+                fire.draw(surface)
+            else:
+                self.__fires.remove(fire)
 
         # Updates and draws character
         if self.__player.update(clock, self.__map.get_grid().get_tilemap()):
+            # TODO: Improve fire collision.
+            if (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
+                    Constants.UNIT_FIRE):
+                self.__player.special_event(CharacterEvents.DIE)
             self.__player.draw(surface)
 
         return Constants.PLAYING_SINGLE
