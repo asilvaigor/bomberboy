@@ -33,7 +33,7 @@ class Engine:
         self.__pause = Pause()
 
     def play(self):
-        self.__song.play(-1)
+        # self.__song.play(-1)
         while True:
             if self.__state == MENU:
                 self.__menu.draw(self.__surface)
