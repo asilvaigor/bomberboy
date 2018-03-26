@@ -43,3 +43,12 @@ right2_thin
 right2_normal
 right2_thick
 right2_thicker
+block_destroying1
+block_destroying2
+block_destroying3
+block_destroying4
+block_destroying5
+block_destroying6
+block_destroying7
+block_destroying8
+block_destroying9

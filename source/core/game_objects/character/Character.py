@@ -226,7 +226,8 @@ class Character(GameObject):
         obstacles = np.array([Constants.UNIT_BLOCK, Constants.UNIT_FIXED_BLOCK,
                               Constants.UNIT_POWERUP_FIRE_HIDE,
                               Constants.UNIT_POWERUP_VELOCITY_HIDE,
-                              Constants.UNIT_POWERUP_BOMB_HIDE])
+                              Constants.UNIT_POWERUP_BOMB_HIDE,
+                              Constants.UNIT_DESTROYING_BLOCK])
         bomb = Constants.UNIT_BOMB
 
         x = self._pose.x

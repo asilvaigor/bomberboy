@@ -41,7 +41,7 @@ class Sprite:
         connections = cv2.connectedComponents(occupied.astype(np.uint8),
                                               connectivity=8)
         image[np.multiply(image[:, :, 0] == 0, connections[1] != 0), 0] = 1
-        self.__icons = {}
+        self.__icons = {'None': pygame.surfarray.make_surface(np.zeros((1, 1)))}
 
         # Puts them in a dict of icons
         max_width = 0

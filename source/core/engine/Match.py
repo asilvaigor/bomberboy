@@ -3,9 +3,9 @@ import sys
 import os
 from pygame.locals import *
 
-from source.core.game_objects.Bomb.Bomb import Bomb
-from source.core.game_objects.Bomb.Fire import Fire
-from source.core.game_objects.Character.Player import Player
+from source.core.game_objects.bomb.Bomb import Bomb
+from source.core.game_objects.bomb.Fire import Fire
+from source.core.game_objects.character.Player import Player
 from source.core.ui.Map import Map
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents

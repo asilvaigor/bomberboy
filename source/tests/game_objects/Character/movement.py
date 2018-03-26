@@ -3,7 +3,7 @@ import numpy as np
 import pygame
 import sys
 
-from source.core.game_objects.Character.Player import Player
+from source.core.game_objects.character.Player import Player
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
 

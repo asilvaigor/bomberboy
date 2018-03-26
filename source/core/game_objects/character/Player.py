@@ -1,6 +1,6 @@
 import numpy as np
 
-from source.core.game_objects.Character.Character import Character
+from source.core.game_objects.character.Character import Character
 from source.core.utils.ObjectEvents import CharacterEvents
 
 
