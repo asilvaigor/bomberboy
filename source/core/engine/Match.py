@@ -1,4 +1,5 @@
 import pygame
+import time
 import sys
 import os
 from pygame.locals import *
@@ -28,8 +29,10 @@ class Match:
         self.__bombs = list()
         self.__fires = list()
 
+        self.__initial_time = time.time()
+
     def play(self, clock, surface):
-        self.__map.draw(surface)
+        self.__map.draw(self.__initial_time, surface)
 
         # Checking for keyboard events
         for event in pygame.event.get():

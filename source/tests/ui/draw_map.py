@@ -1,4 +1,5 @@
 import sys
+import time
 import pygame
 from pygame.locals import *
 from source.core.utils.Constants import *
@@ -12,9 +13,11 @@ pygame.display.set_caption("Map Test")
 
 mapa = Map()
 
+t0 = time.time()
+
 while True:
 
-    mapa.draw(surface)
+    mapa.draw(t0, surface)
 
     for event in pygame.event.get():
         if event.type == QUIT:

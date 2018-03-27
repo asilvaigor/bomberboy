@@ -3,6 +3,7 @@ FONT_SIZE = 30
 MAX_FPS = 200
 NUMBER_POWERUPS = 15
 NUMBER_EMPTY = 8
+GAME_TIME = 5  # Time in minutes
 
 # Display constants
 WINDOW_WIDTH = 735

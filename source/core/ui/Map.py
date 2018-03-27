@@ -1,20 +1,23 @@
 import os
+import time
 import pygame
 
 from source.core.utils.Constants import *
 from source.core.map.Grid import Grid
 
+SCORE_SIZE = SQUARE_SIZE // 2
+
 
 class Map:
 
     def __init__(self):
-        image_dir = (os.path.dirname(os.path.realpath(__file__)) +
-                     '/../../../assets/image/')
-        self.__brick = pygame.image.load(image_dir + "brick.png")
-        self.__block = pygame.image.load(image_dir + "block.png")
-        self.__fire = pygame.image.load(image_dir + "fire.png")
-        self.__bomb = pygame.image.load(image_dir + "bomb.png")
-        self.__shoes = pygame.image.load(image_dir + "shoes.png")
+        assets_dir = (os.path.dirname(os.path.realpath(__file__)) +
+                      '/../../../assets/')
+        self.__brick = pygame.image.load(assets_dir + "image/brick.png")
+        self.__block = pygame.image.load(assets_dir + "image/block.png")
+        self.__fire = pygame.image.load(assets_dir + "image/fire.png")
+        self.__bomb = pygame.image.load(assets_dir + "image/bomb.png")
+        self.__shoes = pygame.image.load(assets_dir + "image/shoes.png")
 
         self.__grid = Grid()
         self.__dim = self.__grid.get_dimension()
@@ -30,7 +33,14 @@ class Map:
         self.__shoes = pygame.transform.scale(self.__shoes, (SQUARE_SIZE,
                                                              SQUARE_SIZE))
 
-    def draw(self, surface):
+        # Score elements
+        self.__player_face = pygame.image.load(assets_dir + "image/bomber_face.png")
+        self.__player_face = pygame.transform.scale(self.__player_face, (3 * SCORE_SIZE,
+                                                                         3 * SCORE_SIZE))
+
+        self.__font = pygame.font.Font(assets_dir + "font/04B_30__.TTF", 2 * FONT_SIZE)
+
+    def draw(self, t0, surface):
         surface.fill(GREEN)
 
         pos = (0, DISPLAY_HEIGTH)
@@ -54,12 +64,31 @@ class Map:
                 elif self.__grid.__getattr__(position=(x, y)) == UNIT_POWERUP_BOMB_SHOW:
                     surface.blit(self.__bomb, pos)
 
-                pos = (pos[0]+SQUARE_SIZE, pos[1])
+                pos = (pos[0] + SQUARE_SIZE, pos[1])
 
-            pos = (0, pos[1]+SQUARE_SIZE)
+            pos = (0, pos[1] + SQUARE_SIZE)
+
+        # Draw Score
+        self.draw_score(t0, surface)
 
     def update(self):
         pass
 
     def get_grid(self):
         return self.__grid
+
+    def draw_score(self, t0, surface):
+        # pos = (3 * SCORE_SIZE, SCORE_SIZE)
+        # surface.blit(self.__player_face, pos)
+
+        time_text = self.__font.render(self.get_time(t0), True, WHITE)
+        time_pos = (surface.get_rect().centerx - time_text.get_rect().centerx,
+                    DISPLAY_HEIGTH//2 - time_text.get_rect().centery)
+        surface.blit(time_text, time_pos)
+
+    @staticmethod
+    def get_time(t0):
+        delta_t = time.time() - t0
+        minute = int(GAME_TIME - (delta_t / 60))
+        second = int(60 - (delta_t % 60))
+        return str(minute) + ":" + "{:0>2}".format(str(second))
