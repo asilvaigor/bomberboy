@@ -4,12 +4,14 @@ import sys
 import os
 from pygame.locals import *
 
-from source.core.game_objects.bomb.Bomb import Bomb
-from source.core.game_objects.bomb.Fire import Fire
+from source.core.game_objects.Bomb.Bomb import Bomb
+from source.core.game_objects.Bomb.Fire import Fire
 from source.core.game_objects.character.Player import Player
 from source.core.ui.Map import Map
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
+from source.core.ui.Pause import Pause
+from source.core.utils.Constants import *
 
 
 class Match:
@@ -30,9 +32,13 @@ class Match:
         self.__fires = list()
 
         self.__initial_time = time.time()
+        self.__pause = Pause()
 
-    def play(self, clock, surface):
+    def play(self, clock, surface, state):
         self.__map.draw(self.__initial_time, surface)
+
+        if state == PAUSE:
+            self.__pause.draw(surface)
 
         # Checking for keyboard events
         for event in pygame.event.get():
@@ -44,7 +50,11 @@ class Match:
                 if event.key == K_BACKSPACE:
                     return Constants.MENU
                 elif event.key == K_ESCAPE:
-                    return Constants.PAUSE
+                    if state == PAUSE:
+                        return PLAYING_SINGLE
+                    else:
+                        self.__pause.draw(surface)
+                        return self.__pause.update()
                 else:
                     self.__player.key_up(event.key)
 
@@ -86,4 +96,6 @@ class Match:
                 self.__player.special_event(CharacterEvents.DIE)
             self.__player.draw(surface)
 
-        return Constants.PLAYING_SINGLE
+        if state != PAUSE:
+            return Constants.PLAYING_SINGLE
+        return PAUSE
