@@ -38,8 +38,8 @@ class Engine:
                 self.__menu.draw(self.__surface)
                 self.__state = self.__menu.update()
 
-            elif self.__state == PLAYING_SINGLE or self.__state == PAUSE:
-                self.__state = self.__match.play(self.fpsClock, self.__surface, self.__state)
+            elif self.__state == PLAYING_SINGLE:
+                self.__state = self.__match.play(self.fpsClock, self.__surface)
 
             elif self.__state == FINISH:
                 pygame.quit()

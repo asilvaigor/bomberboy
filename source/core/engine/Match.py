@@ -4,8 +4,8 @@ import sys
 import os
 from pygame.locals import *
 
-from source.core.game_objects.Bomb.Bomb import Bomb
-from source.core.game_objects.Bomb.Fire import Fire
+from source.core.game_objects.bomb.Bomb import Bomb
+from source.core.game_objects.bomb.Fire import Fire
 from source.core.game_objects.character.Player import Player
 from source.core.ui.Map import Map
 from source.core.utils import Constants
@@ -21,8 +21,6 @@ class Match:
                        '/../../../assets/')
         self.__menu_font = pygame.font.Font(assets_path + "font/04B_30__.TTF",
                                             Constants.FONT_SIZE)
-        self.__msg = self.__menu_font.render("funcao nao disponivel", True,
-                                             Constants.RED)
 
         self.__map = Map()
         self.__player1_keys = {'up': K_w, 'down': K_s, 'left': K_a,
@@ -34,68 +32,68 @@ class Match:
         self.__initial_time = time.time()
         self.__pause = Pause()
 
-    def play(self, clock, surface, state):
+        self.__game_state = IN_GAME
+
+    def play(self, clock, surface):
         self.__map.draw(self.__initial_time, surface)
 
-        if state == PAUSE:
+        if self.__game_state == PAUSE:
             self.__pause.draw(surface)
+            state = self.__pause.update()
+            if state == IN_GAME:
+                self.__game_state = IN_GAME
+            elif state == MAIN_MENU:
+                return MENU
 
-        # Checking for keyboard events
-        for event in pygame.event.get():
-            if event.type == QUIT:
-                pygame.quit()
-                sys.exit()
+        elif self.__game_state == IN_GAME:
+            # Checking for keyboard events
+            for event in pygame.event.get():
+                if event.type == QUIT:
+                    pygame.quit()
+                    sys.exit()
 
-            if event.type == KEYUP:
-                if event.key == K_BACKSPACE:
-                    return Constants.MENU
-                elif event.key == K_ESCAPE:
-                    if state == PAUSE:
-                        return PLAYING_SINGLE
+                if event.type == KEYUP:
+                    if event.key == K_ESCAPE:
+                        self.__game_state = PAUSE
                     else:
-                        self.__pause.draw(surface)
-                        return self.__pause.update()
-                else:
-                    self.__player.key_up(event.key)
+                        self.__player.key_up(event.key)
 
-            if event.type == KEYDOWN:
-                # If placing bomb, check if character can place bomb and if
-                # there is not another bomb already in this tile.
-                if (event.key == self.__player1_keys['bomb'] and
-                        self.__player.place_bomb()):
-                    if self.__map.get_grid().get_tilemap()[
-                           self.__player.tile] != Constants.UNIT_BOMB:
-                        self.__bombs.append(Bomb(self.__player.tile,
-                                                 self.__player.fire_range))
+                if event.type == KEYDOWN:
+                    # If placing bomb, check if character can place bomb and if
+                    # there is not another bomb already in this tile.
+                    if (event.key == self.__player1_keys['bomb'] and
+                            self.__player.place_bomb()):
+                        if self.__map.get_grid().get_tilemap()[
+                               self.__player.tile] != Constants.UNIT_BOMB:
+                            self.__bombs.append(Bomb(self.__player.tile,
+                                                     self.__player.fire_range))
+                        else:
+                            self.__player.bomb_exploded()
                     else:
-                        self.__player.bomb_exploded()
+                        self.__player.key_down(event.key)
+
+            # Updates and draws bombs
+            for bomb in self.__bombs:
+                if bomb.update(clock, self.__map.get_grid().get_tilemap()):
+                    bomb.draw(surface)
                 else:
-                    self.__player.key_down(event.key)
+                    self.__fires.append(Fire(bomb.tile, bomb.range))
+                    self.__player.bomb_exploded()
+                    self.__bombs.remove(bomb)
 
-        # Updates and draws bombs
-        for bomb in self.__bombs:
-            if bomb.update(clock, self.__map.get_grid().get_tilemap()):
-                bomb.draw(surface)
-            else:
-                self.__fires.append(Fire(bomb.tile, bomb.range))
-                self.__player.bomb_exploded()
-                self.__bombs.remove(bomb)
+            # Updates and draws fires
+            for fire in self.__fires:
+                if fire.update(clock, self.__map.get_grid().get_tilemap()):
+                    fire.draw(surface)
+                else:
+                    self.__fires.remove(fire)
 
-        # Updates and draws fires
-        for fire in self.__fires:
-            if fire.update(clock, self.__map.get_grid().get_tilemap()):
-                fire.draw(surface)
-            else:
-                self.__fires.remove(fire)
+            # Updates and draws character
+            if self.__player.update(clock, self.__map.get_grid().get_tilemap()):
+                # TODO: Improve fire collision.
+                if (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
+                        Constants.UNIT_FIRE):
+                    self.__player.special_event(CharacterEvents.DIE)
+                self.__player.draw(surface)
 
-        # Updates and draws character
-        if self.__player.update(clock, self.__map.get_grid().get_tilemap()):
-            # TODO: Improve fire collision.
-            if (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
-                    Constants.UNIT_FIRE):
-                self.__player.special_event(CharacterEvents.DIE)
-            self.__player.draw(surface)
-
-        if state != PAUSE:
-            return Constants.PLAYING_SINGLE
-        return PAUSE
+        return PLAYING_SINGLE
