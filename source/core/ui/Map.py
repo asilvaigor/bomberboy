@@ -37,10 +37,12 @@ class Map:
         self.__player_face = pygame.image.load(assets_dir + "image/bomber_face.png")
         self.__player_face = pygame.transform.scale(self.__player_face, (3 * SCORE_SIZE,
                                                                          3 * SCORE_SIZE))
-
         self.__font = pygame.font.Font(assets_dir + "font/04B_30__.TTF", 2 * FONT_SIZE)
+        self.__time = (0, 0)
+        self.__t0 = 0
+        self.__last_pause = 0
 
-    def draw(self, t0, surface):
+    def draw(self, t0, ispaused, surface):
         surface.fill(GREEN)
 
         pos = (0, DISPLAY_HEIGTH)
@@ -69,7 +71,7 @@ class Map:
             pos = (0, pos[1] + SQUARE_SIZE)
 
         # Draw Score
-        self.draw_score(t0, surface)
+        self.draw_score(t0, ispaused, surface)
 
     def update(self):
         pass
@@ -77,18 +79,19 @@ class Map:
     def get_grid(self):
         return self.__grid
 
-    def draw_score(self, t0, surface):
+    def draw_score(self, t0, ispaused, surface):
         # pos = (3 * SCORE_SIZE, SCORE_SIZE)
         # surface.blit(self.__player_face, pos)
 
-        time_text = self.__font.render(self.get_time(t0), True, WHITE)
+        time_text = self.__font.render(self.get_time(t0, ispaused), True, WHITE)
         time_pos = (surface.get_rect().centerx - time_text.get_rect().centerx,
                     DISPLAY_HEIGTH//2 - time_text.get_rect().centery)
         surface.blit(time_text, time_pos)
 
-    @staticmethod
-    def get_time(t0):
+    def get_time(self, t0, ispaused):
         delta_t = time.time() - t0
         minute = int(GAME_TIME - (delta_t / 60))
         second = int(60 - (delta_t % 60))
-        return str(minute) + ":" + "{:0>2}".format(str(second))
+        if not ispaused:
+            self.__time = (minute, second)
+        return str(self.__time[0]) + ":" + "{:0>2}".format(str(self.__time[1]))

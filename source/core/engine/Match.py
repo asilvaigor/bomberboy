@@ -30,14 +30,17 @@ class Match:
         self.__fires = list()
 
         self.__initial_time = time.time()
-        self.__pause = Pause()
+        self.__pause = None
 
         self.__game_state = IN_GAME
 
     def play(self, clock, surface):
-        self.__map.draw(self.__initial_time, surface)
+        self.__map.draw(self.__initial_time, self.__game_state == PAUSE, surface)
 
         if self.__game_state == PAUSE:
+            if not self.__pause:  # Verify that the pointer is null
+                self.__pause = Pause()
+
             self.__pause.draw(surface)
             state = self.__pause.update()
             if state == IN_GAME:
@@ -46,6 +49,10 @@ class Match:
                 return MENU
 
         elif self.__game_state == IN_GAME:
+            if self.__pause:  # Verify that the pointer is null
+                del self.__pause
+                self.__pause = None
+
             # Checking for keyboard events
             for event in pygame.event.get():
                 if event.type == QUIT:
