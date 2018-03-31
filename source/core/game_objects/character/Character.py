@@ -26,7 +26,8 @@ class Character(GameObject):
         sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
                        '/../../../../assets/sprites/')
         self.__sprite = Sprite(sprites_dir + sprite_name + '.png',
-                               sprites_dir + sprite_name + '.txt', -3).get_dict()
+                               sprites_dir + sprite_name + '.txt',
+                               (-3, 0)).get_dict()
 
         self.__speed = Constants.INITIAL_SPEED
         self.__icon = self.__sprite['down']

@@ -14,7 +14,7 @@ class Sprite:
         :param image_path: Path to a .gif file with a sheet of different icons
         on the animation.
         :param scenes_names_path: Path to a .txt file with names for each icon.
-        :param delta: Integer which allows variation of the size of each icon.
+        :param delta: Tuple which allows variation of the size of each icon.
         It can be negative, to decrease the total size, or positive. If it is
         zero, the icon's width will be equal to a square size.
         """
@@ -63,10 +63,10 @@ class Sprite:
                 self.__icons[self.__scenes[index - 1]] = icon
 
         for key in self.__icons:
-            width = int((Constants.SQUARE_SIZE + self.__delta) *
+            width = int((Constants.SQUARE_SIZE + self.__delta[0]) *
                         self.__icons[key].get_size()[0] / max_width)
-            height = (self.__icons[key].get_size()[1] *
-                      width // self.__icons[key].get_size()[0] + 2)
+            height = round(self.__icons[key].get_size()[1] *
+                           width / self.__icons[key].get_size()[0] + self.__delta[1])
             self.__icons[key] = pygame.transform.scale(self.__icons[key],
                                                        (width, height))
 

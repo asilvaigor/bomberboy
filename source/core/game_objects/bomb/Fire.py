@@ -25,7 +25,8 @@ class Fire(GameObject):
         sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
                        '/../../../../assets/sprites/')
         self.__sprite = Sprite(sprites_dir + sprite_name + '.png',
-                               sprites_dir + sprite_name + '.txt', 1).get_dict()
+                               sprites_dir + sprite_name + '.txt',
+                               (0, 4)).get_dict()
 
         self.__range = fire_range
         self.__setup_animations()
@@ -168,25 +169,24 @@ class Fire(GameObject):
             icon = self.__down_branch[i].update()
             display.blit(icon,
                          (self._pose.x - icon.get_size()[0] / 2,
-                          self._pose.y + (2 * i + 3) *
-                          Constants.SQUARE_SIZE / 2 -
-                          icon.get_size()[1] + Constants.DISPLAY_HEIGTH))
+                          self._pose.y + (2 * i + 1) *
+                          Constants.SQUARE_SIZE / 2 + Constants.DISPLAY_HEIGTH))
 
         for i in range(len(self.__left_branch)):
             icon = self.__left_branch[i].update()
             display.blit(icon,
-                         (self._pose.x - (i + 1) * Constants.SQUARE_SIZE -
-                          icon.get_size()[0] / 2,
-                          self._pose.y + Constants.SQUARE_SIZE / 2 -
-                          icon.get_size()[1] + Constants.DISPLAY_HEIGTH))
+                         (self._pose.x - (2 * i + 1) *
+                          Constants.SQUARE_SIZE / 2 - icon.get_size()[0],
+                          self._pose.y - icon.get_size()[1] / 2 +
+                          Constants.DISPLAY_HEIGTH))
 
         for i in range(len(self.__right_branch)):
             icon = self.__right_branch[i].update()
             display.blit(icon,
-                         (self._pose.x + (i + 1) * Constants.SQUARE_SIZE -
-                          icon.get_size()[0] / 2,
-                          self._pose.y + Constants.SQUARE_SIZE / 2 -
-                          icon.get_size()[1] + Constants.DISPLAY_HEIGTH))
+                         (self._pose.x + (2 * i + 1) *
+                          Constants.SQUARE_SIZE / 2,
+                          self._pose.y - icon.get_size()[1] / 2 +
+                          Constants.DISPLAY_HEIGTH))
 
     def __setup_animations(self):
         """

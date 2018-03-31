@@ -1,3 +1,4 @@
+import os
 import sys
 import pygame
 from source.core.utils.Constants import *
@@ -7,15 +8,18 @@ from pygame.locals import *
 class Pause:
 
     def __init__(self):
-        self.__title_font = pygame.font.Font("assets/font/04B_30__.TTF", int(1.5 * FONT_SIZE))
-        self.__menu_font = pygame.font.Font("assets/font/04B_30__.TTF", FONT_SIZE)
+        assets_path = (os.path.dirname(os.path.realpath(__file__)) +
+                       '/../../../assets/')
+
+        self.__title_font = pygame.font.Font(assets_path + "font/04B_30__.TTF", int(1.5 * FONT_SIZE))
+        self.__menu_font = pygame.font.Font(assets_path + "font/04B_30__.TTF", FONT_SIZE)
         self.__pause_msg = self.__title_font.render("Game paused", True, RED)
         self.__resume = self.__menu_font.render("Resume", True, RED)
         self.__return = self.__menu_font.render("Main menu", True, RED)
 
         self.__state = IN_GAME
-        self.__right = pygame.image.load("assets/image/right_arrow.png")
-        self.__left = pygame.image.load("assets/image/left_arrow.png")
+        self.__right = pygame.image.load(assets_path + "image/right_arrow.png")
+        self.__left = pygame.image.load(assets_path + "image/left_arrow.png")
         arrow_size = (int(FONT_SIZE * 1.375),
                       FONT_SIZE)
         self.__right = pygame.transform.scale(self.__right, arrow_size)
