@@ -12,6 +12,3 @@ class CharacterEvents(Enum):
     STOP_LEFT = 7
     WIN = 8
     DIE = 9
-    INCREASE_SPEED = 10
-    INCREASE_BOMB = 11
-    INCREASE_FIRE = 12

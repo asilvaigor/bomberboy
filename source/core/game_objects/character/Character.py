@@ -67,29 +67,6 @@ class Character(GameObject):
             self.__move((1, 0), clock, tilemap)
         elif self._new_event == CharacterEvents.MOVE_LEFT:
             self.__move((-1, 0), clock, tilemap)
-        elif self._new_event == CharacterEvents.INCREASE_SPEED:
-            self.__speed += Constants.SPEED_INCREMENT
-            if self.__speed > Constants.MAX_SPEED:
-                self.__speed = Constants.MAX_SPEED
-
-            step_frequency = Constants.STEPS_PER_SQUARE * (
-                    Constants.INITIAL_SPEED + self.__speed / Constants.MAX_SPEED)
-            self.__move_up_animation.set_durations(
-                np.ones(2) / step_frequency)
-            self.__move_down_animation.set_durations(
-                np.ones(2) / step_frequency)
-            self.__move_right_animation.set_durations(
-                np.ones(2) / step_frequency)
-            self.__move_left_animation.set_durations(
-                np.ones(2) / step_frequency)
-
-            self._new_event = None
-        elif self._new_event == CharacterEvents.INCREASE_BOMB:
-            self.__total_bombs += 1
-            self._new_event = None
-        elif self._new_event == CharacterEvents.INCREASE_FIRE:
-            self.__fire += Constants.FIRE_INCREMENT
-            self._new_event = None
 
         return True
 
@@ -151,13 +128,48 @@ class Character(GameObject):
 
     def special_event(self, event):
         """
-        Updates the character status given that a special event (win, die,
-        picked powerup) occurred.
+        Updates the character status given that a special event (win, die)
+        occurred.
         :param event: CharacterEvent event id.
         """
 
         self._new_event = event
         self._got_special_event = True
+
+    def increase_speed(self):
+        """
+        Increases the character's speed.
+        """
+
+        self.__speed += Constants.SPEED_INCREMENT
+
+        if self.__speed > Constants.MAX_SPEED:
+            self.__speed = Constants.MAX_SPEED
+
+        step_frequency = Constants.STEPS_PER_SQUARE * (
+                Constants.INITIAL_SPEED + self.__speed / Constants.MAX_SPEED)
+        self.__move_up_animation.set_durations(
+            np.ones(2) / step_frequency)
+        self.__move_down_animation.set_durations(
+            np.ones(2) / step_frequency)
+        self.__move_right_animation.set_durations(
+            np.ones(2) / step_frequency)
+        self.__move_left_animation.set_durations(
+            np.ones(2) / step_frequency)
+
+    def increase_fire(self):
+        """
+        Increases the character's fire range.
+        """
+
+        self.__fire += Constants.FIRE_INCREMENT
+
+    def increase_bomb(self):
+        """
+        Increases the character's maximum bomb limit.
+        """
+
+        self.__total_bombs += 1
 
     @property
     def tile(self):

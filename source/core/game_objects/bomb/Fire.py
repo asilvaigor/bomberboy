@@ -12,6 +12,16 @@ class Fire(GameObject):
     Represents a Fire object.
     """
 
+    destroyable_block = list([Constants.UNIT_BLOCK,
+                              Constants.UNIT_DESTROYING_BLOCK])
+    powerups_hidden = list([Constants.UNIT_POWERUP_BOMB_HIDE,
+                            Constants.UNIT_POWERUP_FIRE_HIDE,
+                            Constants.UNIT_POWERUP_VELOCITY_HIDE])
+    powerups_showed = list([Constants.UNIT_POWERUP_BOMB_SHOW,
+                            Constants.UNIT_POWERUP_FIRE_SHOW,
+                            Constants.UNIT_POWERUP_VELOCITY_SHOW,
+                            Constants.UNIT_DESTROYING_POWERUP])
+
     def __init__(self, initial_tile, fire_range):
         """
         Default constructor for the character.
@@ -35,6 +45,8 @@ class Fire(GameObject):
         self.__left_branch = list()
         self.__right_branch = list()
 
+        self.__destroyed_powerups = list()
+
     def update(self, clock, tilemap):
         """
         Updates the fire according to its intrinsic status.
@@ -57,6 +69,10 @@ class Fire(GameObject):
             for i in range(len(self.__right_branch)):
                 tilemap[self.tile[0], self.tile[1] + i + 1] = (
                     Constants.UNIT_EMPTY)
+
+            for powerup in self.__destroyed_powerups:
+                tilemap[powerup[0]] = powerup[1]
+
             return False
 
         # Clearing previous branches
@@ -70,75 +86,57 @@ class Fire(GameObject):
 
         free = list([Constants.UNIT_EMPTY, Constants.UNIT_FIRE,
                      Constants.UNIT_PLAYER])
-        destroyable = list([Constants.UNIT_BLOCK,
-                            Constants.UNIT_POWERUP_BOMB_HIDE,
-                            Constants.UNIT_POWERUP_FIRE_HIDE,
-                            Constants.UNIT_POWERUP_VELOCITY_HIDE,
-                            Constants.UNIT_DESTROYING_BLOCK])
 
         # Up branch
         for i in range(1, self.__range):
-            if np.any(tilemap[self.tile[0] - i, self.tile[1]] == free):
-                tilemap[self.tile[0] - i, self.tile[1]] = Constants.UNIT_FIRE
+            tile = (self.tile[0] - i, self.tile[1])
+            if np.any(tilemap[tile] == free):
+                tilemap[tile] = Constants.UNIT_FIRE
                 if i != self.__range - 1:
                     self.__up_branch.append(self.__up1_animation)
                 else:
                     self.__up_branch.append(self.__up2_animation)
             else:
-                if np.any(
-                        tilemap[self.tile[0] - i, self.tile[1]] == destroyable):
-                    self.__up_branch.append(self.__block_destroying_animation)
-                    tilemap[self.tile[0] - i, self.tile[1]] = (
-                        Constants.UNIT_DESTROYING_BLOCK)
+                self.__destroy_tile(tile, self.__up_branch, tilemap)
                 break
 
         # Down branch
         for i in range(1, self.__range):
-            if np.any(tilemap[self.tile[0] + i, self.tile[1]] == free):
-                tilemap[self.tile[0] + i, self.tile[1]] = Constants.UNIT_FIRE
+            tile = (self.tile[0] + i, self.tile[1])
+            if np.any(tilemap[tile] == free):
+                tilemap[tile] = Constants.UNIT_FIRE
                 if i != self.__range - 1:
                     self.__down_branch.append(self.__down1_animation)
                 else:
                     self.__down_branch.append(self.__down2_animation)
             else:
-                if np.any(
-                        tilemap[self.tile[0] + i, self.tile[1]] == destroyable):
-                    self.__down_branch.append(self.__block_destroying_animation)
-                    tilemap[self.tile[0] + i, self.tile[1]] = (
-                        Constants.UNIT_DESTROYING_BLOCK)
+                self.__destroy_tile(tile, self.__down_branch, tilemap)
                 break
 
         # Left branch
         for i in range(1, self.__range):
-            if np.any(tilemap[self.tile[0], self.tile[1] - i] == free):
-                tilemap[self.tile[0], self.tile[1] - i] = Constants.UNIT_FIRE
+            tile = (self.tile[0], self.tile[1] - i)
+            if np.any(tilemap[tile] == free):
+                tilemap[tile] = Constants.UNIT_FIRE
                 if i != self.__range - 1:
                     self.__left_branch.append(self.__left1_animation)
                 else:
                     self.__left_branch.append(self.__left2_animation)
             else:
-                if np.any(
-                        tilemap[self.tile[0], self.tile[1] - i] == destroyable):
-                    self.__left_branch.append(self.__block_destroying_animation)
-                    tilemap[self.tile[0], self.tile[1] - i] = (
-                        Constants.UNIT_DESTROYING_BLOCK)
+                self.__destroy_tile(tile, self.__left_branch, tilemap)
                 break
 
         # Right branch
         for i in range(1, self.__range):
-            if np.any(tilemap[self.tile[0], self.tile[1] + i] == free):
-                tilemap[self.tile[0], self.tile[1] + i] = Constants.UNIT_FIRE
+            tile = (self.tile[0], self.tile[1] + i)
+            if np.any(tilemap[tile] == free):
+                tilemap[tile] = Constants.UNIT_FIRE
                 if i != self.__range - 1:
                     self.__right_branch.append(self.__right1_animation)
                 else:
                     self.__right_branch.append(self.__right2_animation)
             else:
-                if np.any(
-                        tilemap[self.tile[0], self.tile[1] + i] == destroyable):
-                    self.__right_branch.append(
-                        self.__block_destroying_animation)
-                    tilemap[self.tile[0], self.tile[1] + i] = (
-                        Constants.UNIT_DESTROYING_BLOCK)
+                self.__destroy_tile(tile, self.__right_branch, tilemap)
                 break
 
         return True
@@ -187,6 +185,34 @@ class Fire(GameObject):
                           Constants.SQUARE_SIZE / 2,
                           self._pose.y - icon.get_size()[1] / 2 +
                           Constants.DISPLAY_HEIGTH))
+
+    def __destroy_tile(self, tile, branch, tilemap):
+        """
+        Handles the destruction of a block by changing its unit type and its
+        animation.
+        :param tile: Tile coordinate in a tuple.
+        :param branch: Branch in which the block was destroyed.
+        :param tilemap: Tilemap array.
+        """
+
+        if np.any(tilemap[tile] == self.destroyable_block):
+            branch.append(self.__block_destroying_animation)
+            tilemap[tile] = Constants.UNIT_DESTROYING_BLOCK
+        elif np.any(tilemap[tile] == self.powerups_hidden):
+            branch.append(self.__block_destroying_animation)
+            if tilemap[tile] == Constants.UNIT_POWERUP_VELOCITY_HIDE:
+                self.__destroyed_powerups.append(
+                    (tile, Constants.UNIT_POWERUP_VELOCITY_SHOW))
+            elif tilemap[tile] == Constants.UNIT_POWERUP_FIRE_HIDE:
+                self.__destroyed_powerups.append(
+                    (tile, Constants.UNIT_POWERUP_FIRE_SHOW))
+            else:
+                self.__destroyed_powerups.append(
+                    (tile, Constants.UNIT_POWERUP_BOMB_SHOW))
+            tilemap[tile] = Constants.UNIT_DESTROYING_BLOCK
+        elif np.any(tilemap[tile] == self.powerups_showed):
+            branch.append(self.__powerup_destroying_animation)
+            tilemap[tile] = Constants.UNIT_DESTROYING_POWERUP
 
     def __setup_animations(self):
         """
@@ -276,6 +302,18 @@ class Fire(GameObject):
             Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
 
         self.__block_destroying_animation = Animation(
+            [self.__sprite['block_destroying1'], self.__sprite['None'],
+             self.__sprite['block_destroying2'], self.__sprite['None'],
+             self.__sprite['block_destroying3'], self.__sprite['None'],
+             self.__sprite['block_destroying4'], self.__sprite['None'],
+             self.__sprite['block_destroying5'], self.__sprite['None'],
+             self.__sprite['block_destroying6'], self.__sprite['None'],
+             self.__sprite['block_destroying7'], self.__sprite['None'],
+             self.__sprite['block_destroying8'], self.__sprite['None'],
+             self.__sprite['block_destroying9'], self.__sprite['None']],
+            np.tile([0.175, 0], 9), stop=True)
+
+        self.__powerup_destroying_animation = Animation(
             [self.__sprite['block_destroying1'], self.__sprite['None'],
              self.__sprite['block_destroying2'], self.__sprite['None'],
              self.__sprite['block_destroying3'], self.__sprite['None'],

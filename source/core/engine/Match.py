@@ -35,7 +35,8 @@ class Match:
         self.__game_state = IN_GAME
 
     def play(self, clock, surface):
-        self.__map.draw(self.__initial_time, self.__game_state == PAUSE, surface)
+        self.__map.draw(self.__initial_time, self.__game_state == PAUSE,
+                        surface)
 
         if self.__game_state == PAUSE:
             if not self.__pause:  # Verify that the pointer is null
@@ -97,10 +98,26 @@ class Match:
 
             # Updates and draws character
             if self.__player.update(clock, self.__map.get_grid().get_tilemap()):
-                # TODO: Improve fire collision.
                 if (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
                         Constants.UNIT_FIRE):
                     self.__player.special_event(CharacterEvents.DIE)
+                    # TODO: Other player wins (or not)
+                elif (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
+                      Constants.UNIT_POWERUP_BOMB_SHOW):
+                    self.__player.increase_bomb()
+                    self.__map.get_grid().get_tilemap()[self.__player.tile] = (
+                        Constants.UNIT_EMPTY)
+                elif (self.__map.get_grid().get_tilemap()[
+                          self.__player.tile] ==
+                      Constants.UNIT_POWERUP_FIRE_SHOW):
+                    self.__player.increase_fire()
+                    self.__map.get_grid().get_tilemap()[self.__player.tile] = (
+                        Constants.UNIT_EMPTY)
+                elif (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
+                      Constants.UNIT_POWERUP_VELOCITY_SHOW):
+                    self.__player.increase_speed()
+                    self.__map.get_grid().get_tilemap()[self.__player.tile] = (
+                        Constants.UNIT_EMPTY)
                 self.__player.draw(surface)
 
         return PLAYING_SINGLE
