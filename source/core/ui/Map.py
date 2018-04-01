@@ -10,7 +10,7 @@ SCORE_SIZE = SQUARE_SIZE // 2
 
 class Map:
 
-    def __init__(self):
+    def __init__(self, initial_time):
         assets_dir = (os.path.dirname(os.path.realpath(__file__)) +
                       '/../../../assets/')
         self.__brick = pygame.image.load(assets_dir + "image/brick.png")
@@ -39,10 +39,13 @@ class Map:
                                                                          3 * SCORE_SIZE))
         self.__font = pygame.font.Font(assets_dir + "font/04B_30__.TTF", 2 * FONT_SIZE)
         self.__time = (0, 0)
-        self.__t0 = 0
-        self.__last_pause = 0
 
-    def draw(self, t0, ispaused, surface):
+        # Pause elements
+        self.__t0 = initial_time
+        self.__is_paused = False
+        self.__delta_pause = 0
+
+    def draw(self, surface):
         surface.fill(GREEN)
 
         pos = (0, DISPLAY_HEIGTH)
@@ -71,7 +74,7 @@ class Map:
             pos = (0, pos[1] + SQUARE_SIZE)
 
         # Draw Score
-        self.draw_score(t0, ispaused, surface)
+        self.draw_score(surface)
 
     def update(self):
         pass
@@ -79,19 +82,25 @@ class Map:
     def get_grid(self):
         return self.__grid
 
-    def draw_score(self, t0, ispaused, surface):
+    def draw_score(self, surface):
         # pos = (3 * SCORE_SIZE, SCORE_SIZE)
         # surface.blit(self.__player_face, pos)
 
-        time_text = self.__font.render(self.get_time(t0, ispaused), True, WHITE)
+        time_text = self.__font.render(self.get_time(), True, WHITE)
         time_pos = (surface.get_rect().centerx - time_text.get_rect().centerx,
                     DISPLAY_HEIGTH//2 - time_text.get_rect().centery)
         surface.blit(time_text, time_pos)
 
-    def get_time(self, t0, ispaused):
-        delta_t = time.time() - t0
+    def get_time(self):
+        delta_t = time.time() - self.__t0 - self.__delta_pause
         minute = int(GAME_TIME - (delta_t / 60))
         second = int(60 - (delta_t % 60))
-        if not ispaused:
+        if not self.__is_paused:
             self.__time = (minute, second)
         return str(self.__time[0]) + ":" + "{:0>2}".format(str(self.__time[1]))
+
+    def set_is_paused(self, is_paused):
+        self.__is_paused = is_paused
+
+    def increment_delta_pause(self, delta):
+        self.__delta_pause += delta

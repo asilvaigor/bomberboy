@@ -22,24 +22,25 @@ class Match:
         self.__menu_font = pygame.font.Font(assets_path + "font/04B_30__.TTF",
                                             Constants.FONT_SIZE)
 
-        self.__map = Map()
+        self.__map = Map(time.time())
         self.__player1_keys = {'up': K_w, 'down': K_s, 'left': K_a,
                                'right': K_d, 'bomb': K_v}
         self.__player = Player((1, 1), 'bomberboy_white', self.__player1_keys)
         self.__bombs = list()
         self.__fires = list()
 
-        self.__initial_time = time.time()
-        self.__pause = None
-
         self.__game_state = IN_GAME
 
+        self.__pause = None
+        self.__time_pause = 0
+
     def play(self, clock, surface):
-        self.__map.draw(self.__initial_time, self.__game_state == PAUSE,
-                        surface)
+        self.__map.draw(surface)
+        self.__map.set_is_paused(self.__game_state == PAUSE)
 
         if self.__game_state == PAUSE:
             if not self.__pause:  # Verify that the pointer is null
+                self.__time_pause = time.time()
                 self.__pause = Pause()
 
             self.__pause.draw(surface)
@@ -51,6 +52,7 @@ class Match:
 
         elif self.__game_state == IN_GAME:
             if self.__pause:  # Verify that the pointer is null
+                self.__map.increment_delta_pause(time.time() - self.__time_pause)
                 del self.__pause
                 self.__pause = None
 
