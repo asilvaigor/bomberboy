@@ -95,6 +95,10 @@ class Match:
             for fire in self.__fires:
                 if fire.update(clock, self.__map.get_grid().get_tilemap()):
                     fire.draw(surface)
+                    for tile in fire.get_triggered_bombs():
+                        for bomb in self.__bombs:
+                            if bomb.tile == tile:
+                                bomb.explode()
                 else:
                     self.__fires.remove(fire)
 

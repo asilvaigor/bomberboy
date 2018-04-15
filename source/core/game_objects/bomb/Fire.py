@@ -46,6 +46,7 @@ class Fire(GameObject):
         self.__right_branch = list()
 
         self.__destroyed_powerups = list()
+        self.__triggered_bombs = list()
 
     def update(self, clock, tilemap):
         """
@@ -81,8 +82,8 @@ class Fire(GameObject):
         self.__left_branch.clear()
         self.__right_branch.clear()
 
-        # Middle tile
-        tilemap[self.tile] = Constants.UNIT_FIRE
+        # Center tile
+        tilemap[self.tile] = Constants.UNIT_CENTER_FIRE
 
         free = list([Constants.UNIT_EMPTY, Constants.UNIT_FIRE,
                      Constants.UNIT_PLAYER])
@@ -96,6 +97,11 @@ class Fire(GameObject):
                     self.__up_branch.append(self.__up1_animation)
                 else:
                     self.__up_branch.append(self.__up2_animation)
+            elif tilemap[tile] == Constants.UNIT_BOMB:
+                self.__triggered_bombs.append(tile)
+                break
+            elif tilemap[tile] == Constants.UNIT_CENTER_FIRE:
+                break
             else:
                 self.__destroy_tile(tile, self.__up_branch, tilemap)
                 break
@@ -109,6 +115,11 @@ class Fire(GameObject):
                     self.__down_branch.append(self.__down1_animation)
                 else:
                     self.__down_branch.append(self.__down2_animation)
+            elif tilemap[tile] == Constants.UNIT_BOMB:
+                self.__triggered_bombs.append(tile)
+                break
+            elif tilemap[tile] == Constants.UNIT_CENTER_FIRE:
+                break
             else:
                 self.__destroy_tile(tile, self.__down_branch, tilemap)
                 break
@@ -122,6 +133,11 @@ class Fire(GameObject):
                     self.__left_branch.append(self.__left1_animation)
                 else:
                     self.__left_branch.append(self.__left2_animation)
+            elif tilemap[tile] == Constants.UNIT_BOMB:
+                self.__triggered_bombs.append(tile)
+                break
+            elif tilemap[tile] == Constants.UNIT_CENTER_FIRE:
+                break
             else:
                 self.__destroy_tile(tile, self.__left_branch, tilemap)
                 break
@@ -135,6 +151,11 @@ class Fire(GameObject):
                     self.__right_branch.append(self.__right1_animation)
                 else:
                     self.__right_branch.append(self.__right2_animation)
+            elif tilemap[tile] == Constants.UNIT_BOMB:
+                self.__triggered_bombs.append(tile)
+                break
+            elif tilemap[tile] == Constants.UNIT_CENTER_FIRE:
+                break
             else:
                 self.__destroy_tile(tile, self.__right_branch, tilemap)
                 break
@@ -185,6 +206,14 @@ class Fire(GameObject):
                           Constants.SQUARE_SIZE / 2,
                           self._pose.y - icon.get_size()[1] / 2 +
                           Constants.DISPLAY_HEIGTH))
+
+    def get_triggered_bombs(self):
+        """
+        Getter for the list of triggered bombs caused by the explosion.
+        :return: List of coordinates for bombs that were triggered.
+        """
+
+        return self.__triggered_bombs
 
     def __destroy_tile(self, tile, branch, tilemap):
         """
