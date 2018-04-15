@@ -196,10 +196,10 @@ class Fire(GameObject):
         """
 
         if np.any(tilemap[tile] == self.destroyable_block):
-            branch.append(self.__block_destroying_animation)
+            branch.append(self.__explosion_animation)
             tilemap[tile] = Constants.UNIT_DESTROYING_BLOCK
         elif np.any(tilemap[tile] == self.powerups_hidden):
-            branch.append(self.__block_destroying_animation)
+            branch.append(self.__explosion_animation)
             if tilemap[tile] == Constants.UNIT_POWERUP_VELOCITY_HIDE:
                 self.__destroyed_powerups.append(
                     (tile, Constants.UNIT_POWERUP_VELOCITY_SHOW))
@@ -211,7 +211,7 @@ class Fire(GameObject):
                     (tile, Constants.UNIT_POWERUP_BOMB_SHOW))
             tilemap[tile] = Constants.UNIT_DESTROYING_BLOCK
         elif np.any(tilemap[tile] == self.powerups_showed):
-            branch.append(self.__powerup_destroying_animation)
+            branch.append(self.__explosion_animation)
             tilemap[tile] = Constants.UNIT_DESTROYING_POWERUP
 
     def __setup_animations(self):
@@ -224,103 +224,85 @@ class Fire(GameObject):
             [[self.__sprite['middle_thinner'], self.__sprite['middle_thin']],
              np.tile([self.__sprite['middle_normal'],
                       self.__sprite['middle_thick'],
-                      self.__sprite['middle_thicker']], 5),
+                      self.__sprite['middle_thicker']], 3),
              [self.__sprite['middle_thick'], self.__sprite['middle_normal'],
               self.__sprite['middle_thin'], self.__sprite['middle_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__up1_animation = Animation(np.concatenate(
             [[self.__sprite['up1_thinner'], self.__sprite['up1_thin']],
              np.tile([self.__sprite['up1_normal'],
                       self.__sprite['up1_thick'],
-                      self.__sprite['up1_thicker']], 5),
+                      self.__sprite['up1_thicker']], 3),
              [self.__sprite['up1_thick'], self.__sprite['up1_normal'],
               self.__sprite['up1_thin'], self.__sprite['up1_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__up2_animation = Animation(np.concatenate(
             [[self.__sprite['up2_thinner'], self.__sprite['up1_thin']],
              np.tile([self.__sprite['up2_normal'],
                       self.__sprite['up2_thick'],
-                      self.__sprite['up2_thicker']], 5),
+                      self.__sprite['up2_thicker']], 3),
              [self.__sprite['up2_thick'], self.__sprite['up2_normal'],
               self.__sprite['up2_thin'], self.__sprite['up2_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__down1_animation = Animation(np.concatenate(
             [[self.__sprite['down1_thinner'], self.__sprite['down1_thin']],
              np.tile([self.__sprite['down1_normal'],
                       self.__sprite['down1_thick'],
-                      self.__sprite['down1_thicker']], 5),
+                      self.__sprite['down1_thicker']], 3),
              [self.__sprite['down1_thick'], self.__sprite['down1_normal'],
               self.__sprite['down1_thin'], self.__sprite['down1_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__down2_animation = Animation(np.concatenate(
             [[self.__sprite['down2_thinner'], self.__sprite['down2_thin']],
              np.tile([self.__sprite['down2_normal'],
                       self.__sprite['down2_thick'],
-                      self.__sprite['down2_thicker']], 5),
+                      self.__sprite['down2_thicker']], 3),
              [self.__sprite['down2_thick'], self.__sprite['down2_normal'],
               self.__sprite['down2_thin'], self.__sprite['down2_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__left1_animation = Animation(np.concatenate(
             [[self.__sprite['left1_thinner'], self.__sprite['left1_thin']],
              np.tile([self.__sprite['left1_normal'],
                       self.__sprite['left1_thick'],
-                      self.__sprite['left1_thicker']], 5),
+                      self.__sprite['left1_thicker']], 3),
              [self.__sprite['left1_thick'], self.__sprite['left1_normal'],
               self.__sprite['left1_thin'], self.__sprite['left1_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__left2_animation = Animation(np.concatenate(
             [[self.__sprite['left2_thinner'], self.__sprite['left2_thin']],
              np.tile([self.__sprite['left2_normal'],
                       self.__sprite['left2_thick'],
-                      self.__sprite['left2_thicker']], 5),
+                      self.__sprite['left2_thicker']], 3),
              [self.__sprite['left2_thick'], self.__sprite['left2_normal'],
               self.__sprite['left2_thin'], self.__sprite['left2_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__right1_animation = Animation(np.concatenate(
             [[self.__sprite['right1_thinner'], self.__sprite['right1_thin']],
              np.tile([self.__sprite['right1_normal'],
                       self.__sprite['right1_thick'],
-                      self.__sprite['right1_thicker']], 5),
+                      self.__sprite['right1_thicker']], 3),
              [self.__sprite['right1_thick'], self.__sprite['right1_normal'],
               self.__sprite['right1_thin'], self.__sprite['right1_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
         self.__right2_animation = Animation(np.concatenate(
             [[self.__sprite['right2_thinner'], self.__sprite['right2_thin']],
              np.tile([self.__sprite['right2_normal'],
                       self.__sprite['right2_thick'],
-                      self.__sprite['right2_thicker']], 5),
+                      self.__sprite['right2_thicker']], 3),
              [self.__sprite['right2_thick'], self.__sprite['right2_normal'],
               self.__sprite['right2_thin'], self.__sprite['right2_thinner']]]),
-            Constants.FIRE_FRAME_DURATION * np.ones(21), stop=True)
+            Constants.FIRE_FRAME_DURATION * np.ones(15), stop=True)
 
-        self.__block_destroying_animation = Animation(
-            [self.__sprite['block_destroying1'], self.__sprite['None'],
-             self.__sprite['block_destroying2'], self.__sprite['None'],
-             self.__sprite['block_destroying3'], self.__sprite['None'],
-             self.__sprite['block_destroying4'], self.__sprite['None'],
-             self.__sprite['block_destroying5'], self.__sprite['None'],
-             self.__sprite['block_destroying6'], self.__sprite['None'],
-             self.__sprite['block_destroying7'], self.__sprite['None'],
-             self.__sprite['block_destroying8'], self.__sprite['None'],
-             self.__sprite['block_destroying9'], self.__sprite['None']],
-            np.tile([0.175, 0], 9), stop=True)
-
-        self.__powerup_destroying_animation = Animation(
-            [self.__sprite['block_destroying1'], self.__sprite['None'],
-             self.__sprite['block_destroying2'], self.__sprite['None'],
-             self.__sprite['block_destroying3'], self.__sprite['None'],
-             self.__sprite['block_destroying4'], self.__sprite['None'],
-             self.__sprite['block_destroying5'], self.__sprite['None'],
-             self.__sprite['block_destroying6'], self.__sprite['None'],
-             self.__sprite['block_destroying7'], self.__sprite['None'],
-             self.__sprite['block_destroying8'], self.__sprite['None'],
-             self.__sprite['block_destroying9'], self.__sprite['None']],
-            np.tile([0.175, 0], 9), stop=True)
+        self.__explosion_animation = Animation(
+            [self.__sprite['explosion1'], self.__sprite['explosion2'],
+             self.__sprite['explosion3'], self.__sprite['explosion4'],
+             self.__sprite['explosion5']],
+            Constants.FIRE_FRAME_DURATION * 15 / 5 * np.ones(5), stop=True)
