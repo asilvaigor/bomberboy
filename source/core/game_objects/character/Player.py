@@ -10,16 +10,17 @@ class Player(Character):
     Character class and allows movement through keyboard events.
     """
 
-    def __init__(self, initial_tile, sprite_name, key_commands):
+    def __init__(self, initial_tile, sprite_name, key_commands, id):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
         :param sprite_name: String to select the character sprite.
-        :param key_commands: Dict informing keys used by the user to give
+        :param key_commands: Dict informing keys used by the user to give.
+        :param id: Player's id.
         commands to the bomberboy.
         """
 
-        super().__init__(initial_tile, sprite_name)
+        super().__init__(initial_tile, sprite_name, id)
 
         self.__velocity = np.array([0, 0])
         self.__key_commands = key_commands
@@ -71,6 +72,8 @@ class Player(Character):
                 self.__velocity += (0, -1)
             elif key == self.__key_commands['down']:
                 self.__velocity += (0, 1)
+            elif key == self.__key_commands['bomb']:
+                self._just_placed_bomb = True
 
             if not self._got_special_event:
                 if self.__velocity[1] == 1:

@@ -18,7 +18,7 @@ background = pygame.transform.scale(
 
 player = Player((1, 1), 'bomberboy_white', {
     'up': locals.K_UP, 'down': locals.K_DOWN, 'left': locals.K_LEFT,
-    'right': locals.K_RIGHT})
+    'right': locals.K_RIGHT}, 0)
 
 tilemap = np.ones((11, 15), dtype=np.int) * Constants.UNIT_EMPTY
 tilemap[0:11, 0] = Constants.UNIT_FIXED_BLOCK
@@ -46,7 +46,7 @@ while True:
             elif event.key == locals.K_w:
                 player.special_event(CharacterEvents.DIE)
             elif event.key == locals.K_a:
-                player.special_event(CharacterEvents.INCREASE_SPEED)
+                player.increase_speed()
             else:
                 player.key_down(event.key)
 

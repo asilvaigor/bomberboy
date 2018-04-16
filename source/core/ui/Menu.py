@@ -3,9 +3,8 @@ import pygame
 from pygame.locals import *
 from source.core.utils.Constants import *
 
-SINGLE = 0
-MULTI = 1
-EXIT = 2
+PLAY = 0
+EXIT = 1
 
 
 class Menu:
@@ -19,8 +18,7 @@ class Menu:
         """
         # Set default font and texts
         self.__menu_font = pygame.font.Font("assets/font/04B_30__.TTF", FONT_SIZE)
-        self.__single = self.__menu_font.render("single player", True, RED)
-        self.__multi = self.__menu_font.render("multi player", True, RED)
+        self.__play = self.__menu_font.render("play", True, RED)
         self.__exit = self.__menu_font.render("exit", True, RED)
 
         # Set logo's image
@@ -35,7 +33,7 @@ class Menu:
         self.__authors = self.___end_font.render("Heladio, Igor, Jose Otavio", True, RED)
 
         # Arrows
-        self.__state = SINGLE
+        self.__state = PLAY
         self.__right = pygame.image.load("assets/image/right_arrow.png")
         self.__left = pygame.image.load("assets/image/left_arrow.png")
         arrow_size = (int(FONT_SIZE * 1.375),
@@ -54,7 +52,7 @@ class Menu:
 
         # Draw menu buttons
         y = int(surface.get_rect().centery + 2 * FONT_SIZE)
-        text = [self.__single, self.__multi, self.__exit]
+        text = [self.__play, self.__exit]
         for t in text:
             position = (surface.get_rect().centerx - t.get_rect().centerx, y)
             surface.blit(t, position)
@@ -79,10 +77,8 @@ class Menu:
 
             if event.type == KEYUP:
                 if event.key == K_RETURN or event.key == K_KP_ENTER:
-                    if self.__state == SINGLE:
-                        return PLAYING_SINGLE
-                    elif self.__state == MULTI:
-                        return PLAYING_SINGLE
+                    if self.__state == PLAY:
+                        return SETUP
                     elif self.__state == EXIT:
                         return FINISH
 
@@ -101,15 +97,12 @@ class Menu:
         y_0 = int(surface.get_rect().centery + 2 * FONT_SIZE)
         delta_y = FONT_SIZE + int(WINDOW_HEIGHT * 0.05)
 
-        if self.__state == SINGLE:
-            right_position = (x_r - self.__single.get_rect().centerx, y_0)
-            left_position = (x_l + self.__single.get_rect().centerx, y_0)
-        elif self.__state == MULTI:
-            right_position = (x_r - self.__multi.get_rect().centerx, y_0 + delta_y)
-            left_position = (x_l + self.__multi.get_rect().centerx, y_0 + delta_y)
+        if self.__state == PLAY:
+            right_position = (x_r - self.__play.get_rect().centerx, y_0)
+            left_position = (x_l + self.__play.get_rect().centerx, y_0)
         else:
-            right_position = (x_r - self.__exit.get_rect().centerx, y_0 + 2 * delta_y)
-            left_position = (x_l + self.__exit.get_rect().centerx, y_0 + 2 * delta_y)
+            right_position = (x_r - self.__exit.get_rect().centerx, y_0 + delta_y)
+            left_position = (x_l + self.__exit.get_rect().centerx, y_0 + delta_y)
 
         surface.blit(self.__right, right_position)
         surface.blit(self.__left, left_position)

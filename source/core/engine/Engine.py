@@ -3,10 +3,8 @@ import pygame
 from pygame.locals import *
 from source.core.utils.Constants import *
 from source.core.ui.Menu import Menu
+from source.core.ui.Setup import Setup
 from source.core.engine.Match import Match
-
-
-# from source.core.ui.Pause import Pause
 
 
 class Engine:
@@ -31,6 +29,7 @@ class Engine:
 
         self.__state = MENU
         self.__menu = None
+        self.__setup = None
         self.__match = None
 
     def play(self):
@@ -44,11 +43,19 @@ class Engine:
                 self.__menu.draw(self.__surface)
                 self.__state = self.__menu.update()
 
-            elif self.__state == PLAYING_SINGLE:
-                if not self.__match:  # Verify that the pointer is null
-                    self.__match = Match()
+            elif self.__state == SETUP:
+                if not self.__setup:
+                    self.__setup = Setup()
                     del self.__menu
                     self.__menu = None
+                self.__setup.draw(self.__surface)
+                self.__state = self.__setup.update()
+
+            elif self.__state == PLAYING:
+                if not self.__match:  # Verify that the pointer is null
+                    self.__match = Match(self.__setup.get_characters())
+                    del self.__setup
+                    self.__setup = None
                 self.__state = self.__match.play(self.fpsClock, self.__surface)
 
             elif self.__state == FINISH:

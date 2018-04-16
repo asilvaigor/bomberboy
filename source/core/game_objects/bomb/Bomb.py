@@ -12,10 +12,12 @@ class Bomb(GameObject):
     Represents a Bomb object.
     """
 
-    def __init__(self, initial_tile, range):
+    def __init__(self, initial_tile, range, character_id):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
+        :param range: Fire range of the bomb.
+        :param character_id: Id of the character which put the bomb.
         """
 
         super().__init__(initial_tile)
@@ -31,6 +33,7 @@ class Bomb(GameObject):
         self.__force_explosion = False
         self.__icon = self.__animation.update()
         self.__range = range
+        self.__character_id = character_id
 
     def update(self, clock, tilemap):
         """
@@ -77,6 +80,15 @@ class Bomb(GameObject):
         """
 
         return self.__range
+
+    @property
+    def character_id(self):
+        """
+        Getter for the character's id which placed the bomb.
+        :return: Character id which placed the bomb.
+        """
+
+        return self.__character_id
 
     def __setup_animation(self):
         """

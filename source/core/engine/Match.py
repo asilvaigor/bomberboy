@@ -1,3 +1,4 @@
+import numpy as np
 import pygame
 import time
 import sys
@@ -6,37 +7,40 @@ from pygame.locals import *
 
 from source.core.game_objects.bomb.Bomb import Bomb
 from source.core.game_objects.bomb.Fire import Fire
-from source.core.game_objects.character.Player import Player
 from source.core.ui.Map import Map
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
 from source.core.ui.Pause import Pause
+from source.core.ui.GameOver import GameOver
 from source.core.utils.Constants import *
 
 
 class Match:
 
-    def __init__(self):
+    def __init__(self, characters):
         assets_path = (os.path.dirname(os.path.realpath(__file__)) +
                        '/../../../assets/')
         self.__menu_font = pygame.font.Font(assets_path + "font/04B_30__.TTF",
                                             Constants.FONT_SIZE)
 
         self.__map = Map(time.time())
-        self.__player1_keys = {'up': K_w, 'down': K_s, 'left': K_a,
-                               'right': K_d, 'bomb': K_v}
-        self.__player = Player((1, 1), 'bomberboy_white', self.__player1_keys)
+        self.__players = characters[0]
+        self.__cpus = characters[1]
         self.__bombs = list()
         self.__fires = list()
+        self.__alive_characters = True * np.ones(len(self.__players) +
+                                                 len(self.__cpus))
 
         self.__game_state = IN_GAME
 
         self.__pause = None
+        self.__game_over = None
         self.__time_pause = 0
 
     def play(self, clock, surface):
         self.__map.draw(surface)
-        self.__map.set_is_paused(self.__game_state == PAUSE)
+        self.__map.set_is_paused(self.__game_state == PAUSE or
+                                 self.__game_state == OVER)
 
         if self.__game_state == PAUSE:
             if not self.__pause:  # Verify that the pointer is null
@@ -50,9 +54,34 @@ class Match:
             elif state == MAIN_MENU:
                 return MENU
 
+        elif self.__game_state == OVER:
+            if not self.__game_over:
+                self.__game_over = GameOver()
+
+            # Updates bombs animations
+            for bomb in self.__bombs:
+                if bomb.update(clock, self.__map.get_grid().get_tilemap()):
+                    bomb.draw(surface)
+
+            # Updates fire animations
+            for fire in self.__fires:
+                if fire.update(clock, self.__map.get_grid().get_tilemap()):
+                    fire.draw(surface)
+
+            # Updates character animations
+            for player in self.__players:
+                self.__update_character(player, clock, surface)
+            for cpu in self.__cpus:
+                self.__update_character(cpu, clock, surface)
+
+            self.__game_over.draw(surface)
+            if self.__game_over.update() == MAIN_MENU:
+                return MENU
+
         elif self.__game_state == IN_GAME:
             if self.__pause:  # Verify that the pointer is null
-                self.__map.increment_delta_pause(time.time() - self.__time_pause)
+                self.__map.increment_delta_pause(
+                    time.time() - self.__time_pause)
                 del self.__pause
                 self.__pause = None
 
@@ -66,21 +95,12 @@ class Match:
                     if event.key == K_ESCAPE:
                         self.__game_state = PAUSE
                     else:
-                        self.__player.key_up(event.key)
+                        for player in self.__players:
+                            player.key_up(event.key)
 
                 if event.type == KEYDOWN:
-                    # If placing bomb, check if character can place bomb and if
-                    # there is not another bomb already in this tile.
-                    if (event.key == self.__player1_keys['bomb'] and
-                            self.__player.place_bomb()):
-                        if self.__map.get_grid().get_tilemap()[
-                               self.__player.tile] != Constants.UNIT_BOMB:
-                            self.__bombs.append(Bomb(self.__player.tile,
-                                                     self.__player.fire_range))
-                        else:
-                            self.__player.bomb_exploded()
-                    else:
-                        self.__player.key_down(event.key)
+                    for player in self.__players:
+                        player.key_down(event.key)
 
             # Updates and draws bombs
             for bomb in self.__bombs:
@@ -88,7 +108,12 @@ class Match:
                     bomb.draw(surface)
                 else:
                     self.__fires.append(Fire(bomb.tile, bomb.range))
-                    self.__player.bomb_exploded()
+                    for player in self.__players:
+                        if player.id == bomb.character_id:
+                            player.bomb_exploded()
+                    for cpu in self.__cpus:
+                        if cpu.id == bomb.character_id:
+                            cpu.bomb_exploded()
                     self.__bombs.remove(bomb)
 
             # Updates and draws fires
@@ -102,28 +127,72 @@ class Match:
                 else:
                     self.__fires.remove(fire)
 
-            # Updates and draws character
-            if self.__player.update(clock, self.__map.get_grid().get_tilemap()):
-                if (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
-                        Constants.UNIT_FIRE):
-                    self.__player.special_event(CharacterEvents.DIE)
-                    # TODO: Other player wins (or not)
-                elif (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
-                      Constants.UNIT_POWERUP_BOMB_SHOW):
-                    self.__player.increase_bomb()
-                    self.__map.get_grid().get_tilemap()[self.__player.tile] = (
-                        Constants.UNIT_EMPTY)
-                elif (self.__map.get_grid().get_tilemap()[
-                          self.__player.tile] ==
-                      Constants.UNIT_POWERUP_FIRE_SHOW):
-                    self.__player.increase_fire()
-                    self.__map.get_grid().get_tilemap()[self.__player.tile] = (
-                        Constants.UNIT_EMPTY)
-                elif (self.__map.get_grid().get_tilemap()[self.__player.tile] ==
-                      Constants.UNIT_POWERUP_VELOCITY_SHOW):
-                    self.__player.increase_speed()
-                    self.__map.get_grid().get_tilemap()[self.__player.tile] = (
-                        Constants.UNIT_EMPTY)
-                self.__player.draw(surface)
+            # Updates and draws characters
+            for player in self.__players:
+                if not self.__update_character(player, clock, surface):
+                    self.__alive_characters[player.id] = False
+            for cpu in self.__cpus:
+                if not self.__update_character(cpu, clock, surface):
+                    self.__alive_characters[cpu.id] = False
 
-        return PLAYING_SINGLE
+            if np.count_nonzero(self.__alive_characters) == 0:
+                self.__game_state = OVER
+            elif np.count_nonzero(self.__alive_characters) == 1:
+                for id in range(len(self.__alive_characters)):
+                    if self.__alive_characters[id]:
+                        for player in self.__players:
+                            if player.id == id:
+                                player.special_event(CharacterEvents.WIN)
+                                self.__game_state = OVER
+                        for cpu in self.__cpus:
+                            if cpu.id == id:
+                                cpu.special_event(CharacterEvents.WIN)
+                                self.__game_state = OVER
+
+        return PLAYING
+
+    def __update_character(self, character, clock, surface):
+        """
+        Updates and draws a character according to the map and its events.
+        :param character: Character to be updated.
+        :param clock: Match clock.
+        :param surface: Drawing surface.
+        :return: True if the character is still alive.
+        """
+
+        if character.update(clock, self.__map.get_grid().get_tilemap()):
+            # Check if character died
+            if (self.__map.get_grid().get_tilemap()[character.tile] ==
+                    Constants.UNIT_FIRE or
+                    self.__map.get_grid().get_tilemap()[character.tile] ==
+                    Constants.UNIT_CENTER_FIRE):
+                character.special_event(CharacterEvents.DIE)
+                character.draw(surface)
+                return False
+            # Check if character picked up a powerup
+            elif (self.__map.get_grid().get_tilemap()[character.tile] ==
+                  Constants.UNIT_POWERUP_BOMB_SHOW):
+                character.increase_bomb()
+                self.__map.get_grid().get_tilemap()[character.tile] = (
+                    Constants.UNIT_EMPTY)
+            elif (self.__map.get_grid().get_tilemap()[
+                      character.tile] ==
+                  Constants.UNIT_POWERUP_FIRE_SHOW):
+                character.increase_fire()
+                self.__map.get_grid().get_tilemap()[character.tile] = (
+                    Constants.UNIT_EMPTY)
+            elif (self.__map.get_grid().get_tilemap()[character.tile] ==
+                  Constants.UNIT_POWERUP_VELOCITY_SHOW):
+                character.increase_speed()
+                self.__map.get_grid().get_tilemap()[character.tile] = (
+                    Constants.UNIT_EMPTY)
+            # Check if character placed a bomb
+            elif character.placed_bomb(self.__map.get_grid().get_tilemap()[
+                                           character.tile]):
+                self.__bombs.append(Bomb(
+                    character.tile, character.fire_range, character.id))
+
+            character.draw(surface)
+            return True
+
+        return False

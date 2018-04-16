@@ -13,11 +13,12 @@ class Character(GameObject):
     Abstract class for a BomberBoy character.
     """
 
-    def __init__(self, initial_tile, sprite_name):
+    def __init__(self, initial_tile, sprite_name, id):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
         :param sprite_name: String to select the character sprite.
+        :param id: Character's id.
         Possibilities: white_bomberboy.
         """
 
@@ -37,6 +38,8 @@ class Character(GameObject):
         self.__event = CharacterEvents.STOP_DOWN
         self._new_event = CharacterEvents.STOP_DOWN
         self._got_special_event = False
+        self._just_placed_bomb = False
+        self.__id = id
 
         self.__setup_animations()
 
@@ -106,17 +109,20 @@ class Character(GameObject):
                                    self.__icon.get_size()[1] +
                                    Constants.DISPLAY_HEIGTH))
 
-    def place_bomb(self):
+    def placed_bomb(self, map_unit):
         """
-        Tries placing a bomb.
-        :return: True if it was successful.
+        Checks if the character placed a bomb.
+        :param map_unit Current player tile's map unit.
+        :return: True if the character just placed a bomb.
         """
 
-        if self.__placed_bombs < self.__total_bombs:
+        if (self._just_placed_bomb and self.__placed_bombs < self.__total_bombs
+                and map_unit != Constants.UNIT_BOMB):
+            self._just_placed_bomb = False
             self.__placed_bombs += 1
             return True
-        else:
-            return False
+        self._just_placed_bomb = False
+        return False
 
     def bomb_exploded(self):
         """
@@ -190,6 +196,15 @@ class Character(GameObject):
         """
 
         return self.__fire
+
+    @property
+    def id(self):
+        """
+        Getter for the character's id.
+        :return: Character's id
+        """
+
+        return self.__id
 
     def __setup_animations(self):
         """
