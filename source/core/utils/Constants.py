@@ -36,6 +36,7 @@ BLUE = (56, 176, 222)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (66, 111, 66)
+GRAY = (110, 110, 110)
 
 # Character constants
 STEPS_PER_SQUARE = 2
