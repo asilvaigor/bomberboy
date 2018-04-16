@@ -15,9 +15,9 @@ class Player(Character):
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
         :param sprite_name: String to select the character sprite.
-        :param key_commands: Dict informing keys used by the user to give.
-        :param id: Player's id.
+        :param key_commands: Dict informing keys used by the user to give
         commands to the bomberboy.
+        :param id: Character's id.
         """
 
         super().__init__(initial_tile, sprite_name, id)

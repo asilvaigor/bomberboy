@@ -40,6 +40,8 @@ class Engine:
                     self.__menu = Menu()
                     del self.__match
                     self.__match = None
+                    del self.__setup
+                    self.__setup = None
                 self.__menu.draw(self.__surface)
                 self.__state = self.__menu.update()
 

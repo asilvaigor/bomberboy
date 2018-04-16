@@ -102,6 +102,11 @@ class Match:
                     for player in self.__players:
                         player.key_down(event.key)
 
+            # Decides IA's moves
+            for cpu in self.__cpus:
+                cpu.decide(self.__map.get_grid().get_tilemap(),
+                           zip(self.__players, self.__cpus))
+
             # Updates and draws bombs
             for bomb in self.__bombs:
                 if bomb.update(clock, self.__map.get_grid().get_tilemap()):

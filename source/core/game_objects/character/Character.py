@@ -35,7 +35,7 @@ class Character(GameObject):
         self.__placed_bombs = 0
         self.__total_bombs = 1
         self.__fire = Constants.INITIAL_FIRE
-        self.__event = CharacterEvents.STOP_DOWN
+        self._event = CharacterEvents.STOP_DOWN
         self._new_event = CharacterEvents.STOP_DOWN
         self._got_special_event = False
         self._just_placed_bomb = False
@@ -57,7 +57,7 @@ class Character(GameObject):
             return False
 
         # Handles event variables
-        self.__event = self._new_event
+        self._event = self._new_event
         if self._got_special_event:
             self._got_special_event = False
 
@@ -82,25 +82,25 @@ class Character(GameObject):
         """
 
         # Finite state machine
-        if self.__event == CharacterEvents.MOVE_UP:
+        if self._event == CharacterEvents.MOVE_UP:
             self.__icon = self.__move_up_animation.update()
-        elif self.__event == CharacterEvents.STOP_UP:
+        elif self._event == CharacterEvents.STOP_UP:
             self.__icon = self.__sprite['up']
-        elif self.__event == CharacterEvents.MOVE_DOWN:
+        elif self._event == CharacterEvents.MOVE_DOWN:
             self.__icon = self.__move_down_animation.update()
-        elif self.__event == CharacterEvents.STOP_DOWN:
+        elif self._event == CharacterEvents.STOP_DOWN:
             self.__icon = self.__sprite['down']
-        elif self.__event == CharacterEvents.MOVE_LEFT:
+        elif self._event == CharacterEvents.MOVE_LEFT:
             self.__icon = self.__move_left_animation.update()
-        elif self.__event == CharacterEvents.STOP_LEFT:
+        elif self._event == CharacterEvents.STOP_LEFT:
             self.__icon = self.__sprite['left']
-        elif self.__event == CharacterEvents.MOVE_RIGHT:
+        elif self._event == CharacterEvents.MOVE_RIGHT:
             self.__icon = self.__move_right_animation.update()
-        elif self.__event == CharacterEvents.STOP_RIGHT:
+        elif self._event == CharacterEvents.STOP_RIGHT:
             self.__icon = self.__sprite['right']
-        elif self.__event == CharacterEvents.WIN:
+        elif self._event == CharacterEvents.WIN:
             self.__icon = self.__win_animation.update()
-        elif self.__event == CharacterEvents.DIE:
+        elif self._event == CharacterEvents.DIE:
             self.__icon = self.__die_animation.update()
 
         # Positioning the blit according to the icon size
@@ -264,7 +264,7 @@ class Character(GameObject):
         # Choosing most natural movement upwards according to blocked blocks
         y = self._pose.y + sq / 2 - 2
         y_tile = int(y / sq)
-        if self.__event == CharacterEvents.MOVE_UP:
+        if self._event == CharacterEvents.MOVE_UP:
             if not np.any(obstacles == tilemap[y_tile - 1, x_tile]) and (
                     tilemap[y_tile - 1, x_tile] != bomb or
                     tilemap[self.tile] == bomb):
@@ -272,29 +272,29 @@ class Character(GameObject):
                     self._pose.x = (x_tile + 0.5) * sq
                 elif x % sq <= sq * 0.45:
                     direction = (1, 0)
-                    self.__event = CharacterEvents.MOVE_RIGHT
+                    self._event = CharacterEvents.MOVE_RIGHT
                 else:
                     direction = (-1, 0)
-                    self.__event = CharacterEvents.MOVE_LEFT
+                    self._event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile - 1]) and
                   0 < x % sq < sq / 4 and (tilemap[y_tile - 1, x_tile - 1] !=
                                            bomb or tilemap[self.tile] == bomb)):
                 direction = (-1, 0)
-                self.__event = CharacterEvents.MOVE_LEFT
+                self._event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile + 1]) and
                   3 * sq / 4 < x % sq < sq and (
                           tilemap[y_tile - 1, x_tile + 1] != bomb or
                           tilemap[self.tile] == bomb)):
                 direction = (1, 0)
-                self.__event = CharacterEvents.MOVE_RIGHT
+                self._event = CharacterEvents.MOVE_RIGHT
             else:
                 direction = (0, 0)
-                self.__event = CharacterEvents.STOP_UP
+                self._event = CharacterEvents.STOP_UP
 
         # Choosing most natural movement downwards according to blocked blocks
         y = self._pose.y - sq / 2
         y_tile = int(y / sq)
-        if self.__event == CharacterEvents.MOVE_DOWN:
+        if self._event == CharacterEvents.MOVE_DOWN:
             if not np.any(obstacles == tilemap[y_tile + 1, x_tile]) and (
                     tilemap[y_tile + 1, x_tile] != bomb or
                     tilemap[self.tile] == bomb):
@@ -302,25 +302,25 @@ class Character(GameObject):
                     self._pose.x = (x_tile + 0.5) * sq
                 elif x % sq <= sq * 0.45:
                     direction = (1, 0)
-                    self.__event = CharacterEvents.MOVE_RIGHT
+                    self._event = CharacterEvents.MOVE_RIGHT
                 else:
                     direction = (-1, 0)
-                    self.__event = CharacterEvents.MOVE_LEFT
+                    self._event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile - 1]) and
                   0 <= x % sq < sq / 4 and (
                           tilemap[y_tile + 1, x_tile - 1] != bomb or
                           tilemap[self.tile] == bomb)):
                 direction = (-1, 0)
-                self.__event = CharacterEvents.MOVE_LEFT
+                self._event = CharacterEvents.MOVE_LEFT
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile + 1]) and
                   3 * sq / 4 < x % sq < sq and (
                           tilemap[y_tile + 1, x_tile + 1] != bomb or
                           tilemap[self.tile] == bomb)):
                 direction = (1, 0)
-                self.__event = CharacterEvents.MOVE_RIGHT
+                self._event = CharacterEvents.MOVE_RIGHT
             else:
                 direction = (0, 0)
-                self.__event = CharacterEvents.STOP_DOWN
+                self._event = CharacterEvents.STOP_DOWN
 
         y = self._pose.y
         y_tile = int(y / sq)
@@ -328,7 +328,7 @@ class Character(GameObject):
         # Choosing most natural movement rightwards according to blocked blocks
         x = self._pose.x - sq / 2
         x_tile = int(x / sq)
-        if self.__event == CharacterEvents.MOVE_RIGHT:
+        if self._event == CharacterEvents.MOVE_RIGHT:
             if not np.any(obstacles == tilemap[y_tile, x_tile + 1]) and (
                     tilemap[y_tile, x_tile + 1] != bomb or
                     tilemap[self.tile] == bomb):
@@ -336,30 +336,30 @@ class Character(GameObject):
                     self._pose.y = (y_tile + 0.5) * sq
                 elif y % sq <= sq * 0.45:
                     direction = (0, 1)
-                    self.__event = CharacterEvents.MOVE_DOWN
+                    self._event = CharacterEvents.MOVE_DOWN
                 else:
                     direction = (0, -1)
-                    self.__event = CharacterEvents.MOVE_UP
+                    self._event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile + 1]) and
                   0 <= y % sq < sq / 4 and (
                           tilemap[y_tile - 1, x_tile + 1] != bomb or
                           tilemap[self.tile] == bomb)):
                 direction = (0, -1)
-                self.__event = CharacterEvents.MOVE_UP
+                self._event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile + 1]) and
                   3 * sq / 4 < y % sq < sq and (
                           tilemap[y_tile + 1, x_tile + 1] != bomb or
                           tilemap[self.tile] == bomb)):
                 direction = (0, 1)
-                self.__event = CharacterEvents.MOVE_DOWN
+                self._event = CharacterEvents.MOVE_DOWN
             else:
                 direction = (0, 0)
-                self.__event = CharacterEvents.STOP_RIGHT
+                self._event = CharacterEvents.STOP_RIGHT
 
         # Choosing most natural movement leftwards according to blocked blocks
         x = self._pose.x + sq / 2 - 2
         x_tile = int(x / sq)
-        if self.__event == CharacterEvents.MOVE_LEFT:
+        if self._event == CharacterEvents.MOVE_LEFT:
             if not np.any(obstacles == tilemap[y_tile, x_tile - 1]) and (
                     tilemap[y_tile, x_tile - 1] != bomb or
                     tilemap[self.tile] == bomb):
@@ -367,25 +367,25 @@ class Character(GameObject):
                     self._pose.y = (y_tile + 0.5) * sq
                 elif y % sq <= sq * 0.45:
                     direction = (0, 1)
-                    self.__event = CharacterEvents.MOVE_DOWN
+                    self._event = CharacterEvents.MOVE_DOWN
                 else:
                     direction = (0, -1)
-                    self.__event = CharacterEvents.MOVE_UP
+                    self._event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile - 1, x_tile - 1]) and
                   0 <= y % sq < sq / 4 and (
                           tilemap[y_tile - 1, x_tile - 1] != bomb or
                           tilemap[self.tile] == bomb)):
                 direction = (0, -1)
-                self.__event = CharacterEvents.MOVE_UP
+                self._event = CharacterEvents.MOVE_UP
             elif (not np.any(obstacles == tilemap[y_tile + 1, x_tile - 1]) and
                   3 * sq / 4 < y % sq < sq and (
                           tilemap[y_tile + 1, x_tile - 1] != bomb or
                           tilemap[self.tile] == bomb)):
                 direction = (0, 1)
-                self.__event = CharacterEvents.MOVE_DOWN
+                self._event = CharacterEvents.MOVE_DOWN
             else:
                 direction = (0, 0)
-                self.__event = CharacterEvents.STOP_LEFT
+                self._event = CharacterEvents.STOP_LEFT
 
         # Walking towards best direction
         self._pose.x += (direction[0] * self.__speed *
