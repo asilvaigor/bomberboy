@@ -8,14 +8,16 @@ class GameObject:
     GameObjects: BomberBoy, bomb, powerup and obstacles.
     """
 
-    def __init__(self, initial_tile):
+    def __init__(self, initial_tile, id):
         """
         Default constructor for the GameObject.
         :param initial_tile: Initial tile coordinates for the object.
+        :param id: Character id owner of this object.
         """
 
         self._pose = Pose((2 * initial_tile[1] + 1) * Constants.SQUARE_SIZE / 2,
                           (2 * initial_tile[0] + 1) * Constants.SQUARE_SIZE / 2)
+        self.__id = id
 
     def update(self, clock, tilemap):
         """
@@ -54,3 +56,12 @@ class GameObject:
 
         return (int(self._pose.y / Constants.SQUARE_SIZE),
                 int(self._pose.x / Constants.SQUARE_SIZE))
+
+    @property
+    def id(self):
+        """
+        Getter for the character id.
+        :return: Character id.
+        """
+
+        return self.__id

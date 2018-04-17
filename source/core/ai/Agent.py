@@ -7,10 +7,7 @@ class Agent:
     def __init__(self):
         pass
 
-    def observe(self, tilemap, enemies_pos):
-        pass
-
-    def act(self):
+    def decide(self, tilemap, enemies_pos, reward):
         x = random()
         if x < 1 / 6:
             return CharacterEvents.NOTHING

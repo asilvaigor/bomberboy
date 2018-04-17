@@ -20,7 +20,8 @@ class Cpu(Character):
 
         super().__init__(initial_tile, sprite_name, id)
         self.__agent = Agent()
-        self.__counter = 0
+        self.__frame_counter = 0
+        self.__reward_counter = 0
         self.__decision = CharacterEvents.NOTHING
 
         self.__initial_tile = initial_tile
@@ -28,7 +29,8 @@ class Cpu(Character):
 
     def decide(self, tilemap, characters):
         """
-        Decides the IA next move.
+        Decides the IA next move. This method limits the IA thinking decision to
+        every k frames.
         :param tilemap: Numpy array with the map information.
         :param characters: List of characters in the match.
         """
@@ -38,12 +40,13 @@ class Cpu(Character):
             if c.id != self.id:
                 enemies_pos.append(c.tile)
 
-        if self.__counter < Constants.FRAME_UPDATE_RATE:
-            self.__counter += 1
+        if self.__frame_counter < Constants.FRAME_UPDATE_RATE:
+            self.__frame_counter += 1
         else:
-            self.__agent.observe(tilemap, enemies_pos)
-            self.__decision = self.__agent.act()
-            self.__counter = 0
+            self.__decision = self.__agent.decide(tilemap, enemies_pos,
+                                                  self.__reward_counter)
+            self.__frame_counter = 0
+            self.__reward_counter = 0
         if not (self._new_event == CharacterEvents.WIN or
                 self._new_event == CharacterEvents.DIE):
             self._new_event = self.__decision
@@ -55,4 +58,13 @@ class Cpu(Character):
         """
 
         super().__init__(self.__initial_tile, self.__sprite_name, self.id)
-        self.__counter = 0
+        self.__frame_counter = 0
+
+    def reward(self, reward):
+        """
+        Gives a reward to the cpu for a given action.
+        :param reward:
+        :return:
+        """
+
+        self.__reward_counter += reward

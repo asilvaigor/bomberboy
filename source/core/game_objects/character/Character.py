@@ -22,7 +22,7 @@ class Character(GameObject):
         Possibilities: white_bomberboy.
         """
 
-        super().__init__(initial_tile)
+        super().__init__(initial_tile, id)
 
         self.__sprite = sprite
 
@@ -35,7 +35,7 @@ class Character(GameObject):
         self._new_event = CharacterEvents.STOP_DOWN
         self._got_special_event = False
         self._just_placed_bomb = False
-        self.__id = id
+        self.__is_alive = True
 
         self.__setup_animations()
 
@@ -150,6 +150,9 @@ class Character(GameObject):
         self._new_event = event
         self._got_special_event = True
 
+        if event == CharacterEvents.DIE:
+            self.__is_alive = False
+
     def increase_speed(self):
         """
         Increases the character's speed.
@@ -199,7 +202,7 @@ class Character(GameObject):
     def set_tile(self, tile):
         """
         Setter for the character's tile.
-        :param tile:
+        :param tile: Tuple of ints with the character's tile.
         """
 
         self._pose.x = tile[1] * Constants.SQUARE_SIZE
@@ -218,13 +221,13 @@ class Character(GameObject):
         return self.__fire
 
     @property
-    def id(self):
+    def is_alive(self):
         """
-        Getter for the character's id.
-        :return: Character's id
+        Getter for the character alive status.
+        :return: True if the character is still alive.
         """
 
-        return self.__id
+        return self.__is_alive
 
     def __setup_animations(self):
         """

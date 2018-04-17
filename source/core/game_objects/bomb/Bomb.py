@@ -21,7 +21,7 @@ class Bomb(GameObject):
         :param sprite: Dict of bomb sprites.
         """
 
-        super().__init__(initial_tile)
+        super().__init__(initial_tile, character_id)
 
         self.__sprite = sprite
 
@@ -76,15 +76,6 @@ class Bomb(GameObject):
         """
 
         return self.__range
-
-    @property
-    def character_id(self):
-        """
-        Getter for the character's id which placed the bomb.
-        :return: Character id which placed the bomb.
-        """
-
-        return self.__character_id
 
     def __setup_animation(self):
         """

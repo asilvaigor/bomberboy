@@ -7,6 +7,7 @@ import time
 
 from source.core.game_objects.bomb.Bomb import Bomb
 from source.core.game_objects.bomb.Fire import Fire
+from source.core.game_objects.character.Cpu import Cpu
 from source.core.ui.GameOver import GameOver
 from source.core.ui.Map import Map
 from source.core.ui.Pause import Pause
@@ -126,13 +127,13 @@ class Match:
             if bomb.update(clock, self.__map.get_grid().get_tilemap()):
                 bomb.draw(surface)
             else:
-                self.__fires.append(Fire(bomb.tile, bomb.range,
+                self.__fires.append(Fire(bomb.tile, bomb.range, bomb.id,
                                          self.__sprites['fire']))
                 for player in self.__players:
-                    if player.id == bomb.character_id:
+                    if player.id == bomb.id:
                         player.bomb_exploded()
                 for cpu in self.__cpus:
-                    if cpu.id == bomb.character_id:
+                    if cpu.id == bomb.id:
                         cpu.bomb_exploded()
                 self.__bombs.remove(bomb)
 
@@ -145,6 +146,9 @@ class Match:
                         if bomb.tile == tile:
                             bomb.explode()
             else:
+                for cpu in self.__cpus:
+                    if cpu.id == fire.id:
+                        cpu.reward(fire.reward)
                 self.__fires.remove(fire)
 
         # Updates and draws characters
@@ -227,35 +231,30 @@ class Match:
         :return: True if the character is still alive.
         """
 
-        if character.update(clock, self.__map.get_grid().get_tilemap()):
+        tilemap = self.__map.get_grid().get_tilemap()
+        if character.update(clock, tilemap):
             # Check if character died
-            if (self.__map.get_grid().get_tilemap()[character.tile] ==
-                    Constants.UNIT_FIRE or
-                    self.__map.get_grid().get_tilemap()[character.tile] ==
-                    Constants.UNIT_CENTER_FIRE):
+            if (tilemap[character.tile] == Constants.UNIT_FIRE or
+                    tilemap[character.tile] == Constants.UNIT_CENTER_FIRE):
+                self.__reward_kill(character)
+                if isinstance(character, Cpu) and character.is_alive:
+                    character.reward(Constants.DEATH_REWARD)
                 character.special_event(CharacterEvents.DIE)
                 character.draw(surface)
                 return False
             # Check if character picked up a powerup
-            elif (self.__map.get_grid().get_tilemap()[character.tile] ==
-                  Constants.UNIT_POWERUP_BOMB_SHOW):
+            elif tilemap[character.tile] == Constants.UNIT_POWERUP_BOMB_SHOW:
                 character.increase_bomb()
-                self.__map.get_grid().get_tilemap()[character.tile] = (
-                    Constants.UNIT_EMPTY)
-            elif (self.__map.get_grid().get_tilemap()[
-                      character.tile] ==
-                  Constants.UNIT_POWERUP_FIRE_SHOW):
+                tilemap[character.tile] = Constants.UNIT_EMPTY
+            elif tilemap[character.tile] == Constants.UNIT_POWERUP_FIRE_SHOW:
                 character.increase_fire()
-                self.__map.get_grid().get_tilemap()[character.tile] = (
-                    Constants.UNIT_EMPTY)
-            elif (self.__map.get_grid().get_tilemap()[character.tile] ==
-                  Constants.UNIT_POWERUP_VELOCITY_SHOW):
+                tilemap[character.tile] = Constants.UNIT_EMPTY
+            elif tilemap[character.tile] == (
+                    Constants.UNIT_POWERUP_VELOCITY_SHOW):
                 character.increase_speed()
-                self.__map.get_grid().get_tilemap()[character.tile] = (
-                    Constants.UNIT_EMPTY)
+                tilemap[character.tile] = Constants.UNIT_EMPTY
             # Check if character placed a bomb
-            elif character.placed_bomb(self.__map.get_grid().get_tilemap()[
-                                           character.tile]):
+            elif character.placed_bomb(tilemap[character.tile]):
                 self.__bombs.append(Bomb(character.tile, character.fire_range,
                                          character.id, self.__sprites['bomb']))
 
@@ -263,3 +262,18 @@ class Match:
             return True
 
         return False
+
+    def __reward_kill(self, character_dead):
+        """
+        Finds the character which placed that bomb and rewards it.
+        :param character_dead: Character object who just died.
+        """
+
+        if not character_dead.is_alive:
+            return
+
+        for fire in self.__fires:
+            if fire.contains(character_dead.tile):
+                for cpu in self.__cpus:
+                    if cpu.id == fire.id and character_dead.id != cpu.id:
+                        cpu.reward(Constants.KILL_REWARD)
