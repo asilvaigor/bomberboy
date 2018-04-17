@@ -36,7 +36,7 @@ BLUE = (56, 176, 222)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GREEN = (66, 111, 66)
-GRAY = (110, 110, 110)
+GRAY = (130, 130, 130)
 
 # Character constants
 STEPS_PER_SQUARE = 2
@@ -62,3 +62,14 @@ IN_GAME = 0
 MAIN_MENU = 1
 PAUSE = 2
 OVER = 3
+
+# Character selection
+colors = ['white', 'black', 'blue', 'brown', 'magenta', 'gray',
+          'green', 'orange', 'pink', 'purple', 'yellow']
+WASD = 0
+IJKL = 1
+ARROWS = 2
+CPU = 3
+NONE = 4
+OPTION_TYPE = 0
+OPTION_COLOR = 1

@@ -12,22 +12,18 @@ class Bomb(GameObject):
     Represents a Bomb object.
     """
 
-    def __init__(self, initial_tile, range, character_id):
+    def __init__(self, initial_tile, range, character_id, sprite):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
         :param range: Fire range of the bomb.
         :param character_id: Id of the character which put the bomb.
+        :param sprite: Dict of bomb sprites.
         """
 
         super().__init__(initial_tile)
 
-        sprite_name = 'bomb'
-        sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
-                       '/../../../../assets/sprites/')
-        self.__sprite = Sprite(sprites_dir + sprite_name + '.png',
-                               sprites_dir + sprite_name + '.txt',
-                               (-2, 0)).get_dict()
+        self.__sprite = sprite
 
         self.__setup_animation()
         self.__force_explosion = False

@@ -29,4 +29,10 @@ class Cpu(Character):
         :param characters: List of characters in the match.
         """
 
-        pass
+        enemies_pos = list()
+        for c in characters:
+            if c.id != self.id:
+                enemies_pos.append(c.tile)
+
+        # TODO: Make AI!!
+        self._new_event = CharacterEvents.STOP_DOWN

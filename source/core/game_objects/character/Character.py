@@ -13,22 +13,18 @@ class Character(GameObject):
     Abstract class for a BomberBoy character.
     """
 
-    def __init__(self, initial_tile, sprite_name, id):
+    def __init__(self, initial_tile, sprite, id):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
-        :param sprite_name: String to select the character sprite.
+        :param sprite: Dict of sprites for this character.
         :param id: Character's id.
         Possibilities: white_bomberboy.
         """
 
         super().__init__(initial_tile)
 
-        sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
-                       '/../../../../assets/sprites/')
-        self.__sprite = Sprite(sprites_dir + sprite_name + '.png',
-                               sprites_dir + 'bomberboy.txt',
-                               (-3, 0)).get_dict()
+        self.__sprite = sprite
 
         self.__speed = Constants.INITIAL_SPEED
         self.__icon = self.__sprite['down']
@@ -70,6 +66,8 @@ class Character(GameObject):
             self.__move((1, 0), clock, tilemap)
         elif self._new_event == CharacterEvents.MOVE_LEFT:
             self.__move((-1, 0), clock, tilemap)
+        elif self._new_event == CharacterEvents.PLACE_BOMB:
+            self._just_placed_bomb = True
 
         return True
 

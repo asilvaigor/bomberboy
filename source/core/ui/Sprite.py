@@ -7,7 +7,7 @@ from source.core.utils import Constants
 
 
 class Sprite:
-    def __init__(self, image_path, scenes_names_path, delta):
+    def __init__(self, image_path, scenes_names_path, delta=(0, 0)):
         """
         Animation sprite class. It reads a sprite image sheet and associates
         each icon with a name.
@@ -66,7 +66,8 @@ class Sprite:
             width = int((Constants.SQUARE_SIZE + self.__delta[0]) *
                         self.__icons[key].get_size()[0] / max_width)
             height = round(self.__icons[key].get_size()[1] *
-                           width / self.__icons[key].get_size()[0] + self.__delta[1])
+                           width / self.__icons[key].get_size()[0] +
+                           self.__delta[1])
             self.__icons[key] = pygame.transform.scale(self.__icons[key],
                                                        (width, height))
 

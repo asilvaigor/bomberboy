@@ -73,6 +73,8 @@ class Player(Character):
             elif key == self.__key_commands['down']:
                 self.__velocity += (0, 1)
             elif key == self.__key_commands['bomb']:
+                # Not assigning to an event or the player will stop when placing
+                # a bomb.
                 self._just_placed_bomb = True
 
             if not self._got_special_event:

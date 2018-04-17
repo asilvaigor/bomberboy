@@ -10,5 +10,6 @@ class CharacterEvents(Enum):
     STOP_DOWN = 5
     STOP_RIGHT = 6
     STOP_LEFT = 7
-    WIN = 8
-    DIE = 9
+    PLACE_BOMB = 8
+    WIN = 9
+    DIE = 10

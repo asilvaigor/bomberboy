@@ -22,22 +22,17 @@ class Fire(GameObject):
                             Constants.UNIT_POWERUP_VELOCITY_SHOW,
                             Constants.UNIT_DESTROYING_POWERUP])
 
-    def __init__(self, initial_tile, fire_range):
+    def __init__(self, initial_tile, fire_range, sprite):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the fire.
         :param fire_range: Fire's range in tile units.
+        :param sprite: Dict of fire sprites.
         """
 
         super().__init__(initial_tile)
 
-        sprite_name = 'fire'
-        sprites_dir = (os.path.dirname(os.path.realpath(__file__)) +
-                       '/../../../../assets/sprites/')
-        self.__sprite = Sprite(sprites_dir + sprite_name + '.png',
-                               sprites_dir + sprite_name + '.txt',
-                               (0, 4)).get_dict()
-
+        self.__sprite = sprite
         self.__range = fire_range
         self.__setup_animations()
         self.__up_branch = list()

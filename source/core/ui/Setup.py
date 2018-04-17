@@ -13,11 +13,14 @@ class Setup:
     Class handles the 4 character selections blocks.
     """
 
-    def __init__(self):
+    def __init__(self, sprites):
         """
         Default constructor. It creates 4 character selection blocks and a play
         button.
+        :param sprites: Dict of sprites used in the game.
         """
+
+        self.__sprites = sprites
 
         # Creating play button and arrows
         assets_path = (os.path.dirname(os.path.realpath(__file__)) +
@@ -37,16 +40,16 @@ class Setup:
         error = 9
         off = font_size + 15
         self.__c1_selection = CharacterSelection(
-            0, 0, off,
+            0, self.__sprites, 0, off,
             Constants.WINDOW_WIDTH * 0.5, Constants.WINDOW_HEIGHT * 0.4 + off)
         self.__c2_selection = CharacterSelection(
-            1, Constants.WINDOW_WIDTH * 0.5, off,
+            1, self.__sprites, Constants.WINDOW_WIDTH * 0.5, off,
             Constants.WINDOW_WIDTH - error, Constants.WINDOW_HEIGHT * 0.4 + off)
         self.__c3_selection = CharacterSelection(
-            2, 0, Constants.WINDOW_HEIGHT * 0.4 + off,
+            2, self.__sprites, 0, Constants.WINDOW_HEIGHT * 0.4 + off,
             Constants.WINDOW_WIDTH * 0.5, Constants.WINDOW_HEIGHT * 0.8 + off)
         self.__c4_selection = CharacterSelection(
-            3, Constants.WINDOW_WIDTH * 0.5,
+            3, self.__sprites, Constants.WINDOW_WIDTH * 0.5,
             Constants.WINDOW_HEIGHT * 0.4 + off,
             Constants.WINDOW_WIDTH - error, Constants.WINDOW_HEIGHT * 0.8 + off)
 
@@ -115,6 +118,8 @@ class Setup:
                         return Constants.PLAYING
                     elif event.key == K_BACKSPACE:
                         self.__selection -= 1
+                    elif event.key == K_ESCAPE:
+                        self.__selection = -1
 
         return Constants.SETUP
 

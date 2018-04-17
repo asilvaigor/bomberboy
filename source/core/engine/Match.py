@@ -17,7 +17,7 @@ from source.core.utils.Constants import *
 
 class Match:
 
-    def __init__(self, characters):
+    def __init__(self, characters, sprites):
         assets_path = (os.path.dirname(os.path.realpath(__file__)) +
                        '/../../../assets/')
         self.__menu_font = pygame.font.Font(assets_path + "font/04B_30__.TTF",
@@ -28,8 +28,12 @@ class Match:
         self.__cpus = characters[1]
         self.__bombs = list()
         self.__fires = list()
-        self.__alive_characters = True * np.ones(len(self.__players) +
-                                                 len(self.__cpus))
+        self.__sprites = sprites
+        self.__alive_characters = False * np.ones(4)
+        for player in self.__players:
+            self.__alive_characters[player.id] = True
+        for cpu in self.__cpus:
+            self.__alive_characters[cpu.id] = True
 
         self.__game_state = IN_GAME
 
@@ -105,14 +109,15 @@ class Match:
             # Decides IA's moves
             for cpu in self.__cpus:
                 cpu.decide(self.__map.get_grid().get_tilemap(),
-                           zip(self.__players, self.__cpus))
+                           self.__players + self.__cpus)
 
             # Updates and draws bombs
             for bomb in self.__bombs:
                 if bomb.update(clock, self.__map.get_grid().get_tilemap()):
                     bomb.draw(surface)
                 else:
-                    self.__fires.append(Fire(bomb.tile, bomb.range))
+                    self.__fires.append(Fire(bomb.tile, bomb.range,
+                                             self.__sprites['fire']))
                     for player in self.__players:
                         if player.id == bomb.character_id:
                             player.bomb_exploded()
@@ -148,11 +153,10 @@ class Match:
                         for player in self.__players:
                             if player.id == id:
                                 player.special_event(CharacterEvents.WIN)
-                                self.__game_state = OVER
                         for cpu in self.__cpus:
                             if cpu.id == id:
                                 cpu.special_event(CharacterEvents.WIN)
-                                self.__game_state = OVER
+                self.__game_state = OVER
 
         return PLAYING
 
@@ -194,8 +198,8 @@ class Match:
             # Check if character placed a bomb
             elif character.placed_bomb(self.__map.get_grid().get_tilemap()[
                                            character.tile]):
-                self.__bombs.append(Bomb(
-                    character.tile, character.fire_range, character.id))
+                self.__bombs.append(Bomb(character.tile, character.fire_range,
+                                         character.id, self.__sprites['bomb']))
 
             character.draw(surface)
             return True
