@@ -105,7 +105,7 @@ class Setup:
 
         # Returns to menu
         if self.__selection == -1:
-            return Constants.MENU
+            return Constants.STATE_MENU
         # Updates play button
         elif self.__selection == 4:
             for event in pygame.event.get():
@@ -115,13 +115,13 @@ class Setup:
 
                 if event.type == KEYUP:
                     if event.key == K_RETURN or event.key == K_KP_ENTER:
-                        return Constants.PLAYING
+                        return Constants.STATE_PLAYING
                     elif event.key == K_BACKSPACE:
                         self.__selection -= 1
                     elif event.key == K_ESCAPE:
                         self.__selection = -1
 
-        return Constants.SETUP
+        return Constants.STATE_SETUP
 
     def get_characters(self):
         """

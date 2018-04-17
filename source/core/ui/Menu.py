@@ -78,9 +78,9 @@ class Menu:
             if event.type == KEYUP:
                 if event.key == K_RETURN or event.key == K_KP_ENTER:
                     if self.__state == PLAY:
-                        return SETUP
+                        return STATE_SETUP
                     elif self.__state == EXIT:
-                        return FINISH
+                        return STATE_CLOSE
 
                 elif event.key == K_UP:
                     self.__state -= 1
@@ -89,7 +89,7 @@ class Menu:
                     self.__state += 1
                     self.__state %= 3
 
-        return MENU
+        return STATE_MENU
 
     def draw_arrow(self, surface):
         x_r = surface.get_rect().centerx - 3 * self.__right.get_rect().centerx

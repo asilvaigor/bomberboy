@@ -12,33 +12,41 @@ from source.core.utils.Constants import *
 class Engine:
     """
     Game engine class. This is the class that runs the game and contains the
-    map, elements, sounds, status etc.
+    map, sounds, status etc.
     """
 
     def __init__(self):
         """
-        Set variables required for window creation.
+        Set variables required for window creation, loads sprites and song.
         """
+
+        # Pygame initialization
         pygame.init()
-
-        self.fpsClock = pygame.time.Clock()
-
+        self.__clock = pygame.time.Clock()
         self.__game_name = GAME_NAME
-        self.__surface = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
+        self.__surface = pygame.display.set_mode(
+            (WINDOW_WIDTH, WINDOW_HEIGHT), 0, 32)
         pygame.display.set_caption(self.__game_name)
 
+        # Loading basic assets
         self.__song = pygame.mixer.Sound("assets/song/song.ogg")
         self.__sprites = SpriteHandler().sprites
 
-        self.__state = MENU
+        # Engine states
+        self.__state = STATE_MENU
         self.__menu = None
         self.__setup = None
         self.__match = None
 
     def play(self):
+        """
+        Contains the engine loop, with a state machine which contains the game's
+        screen modes.
+        """
+
         # self.__song.play(-1)
         while True:
-            if self.__state == MENU:
+            if self.__state == STATE_MENU:
                 if not self.__menu:  # Verify that the pointer is null
                     self.__menu = Menu()
                     del self.__match
@@ -48,7 +56,7 @@ class Engine:
                 self.__menu.draw(self.__surface)
                 self.__state = self.__menu.update()
 
-            elif self.__state == SETUP:
+            elif self.__state == STATE_SETUP:
                 if not self.__setup:
                     self.__setup = Setup(self.__sprites)
                     del self.__menu
@@ -56,18 +64,17 @@ class Engine:
                 self.__setup.draw(self.__surface)
                 self.__state = self.__setup.update()
 
-            elif self.__state == PLAYING:
+            elif self.__state == STATE_PLAYING:
                 if not self.__match:  # Verify that the pointer is null
                     self.__match = Match(self.__setup.get_characters(),
                                          self.__sprites)
                     del self.__setup
                     self.__setup = None
-                self.__state = self.__match.play(self.fpsClock, self.__surface)
+                self.__state = self.__match.play(self.__clock, self.__surface)
 
-            elif self.__state == FINISH:
+            elif self.__state == STATE_CLOSE:
                 pygame.quit()
                 sys.exit()
 
             pygame.display.update()
-
-            self.fpsClock.tick(MAX_FPS)
+            self.__clock.tick(MAX_FPS)
