@@ -35,4 +35,6 @@ class Cpu(Character):
                 enemies_pos.append(c.tile)
 
         # TODO: Make AI!!
-        self._new_event = CharacterEvents.STOP_DOWN
+        if not (self._new_event == CharacterEvents.WIN or
+                self._new_event == CharacterEvents.DIE):
+            self._new_event = CharacterEvents.STOP_DOWN
