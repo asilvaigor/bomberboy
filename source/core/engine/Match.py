@@ -81,6 +81,14 @@ class Match:
 
         return Constants.STATE_PLAYING
 
+    def is_over(self):
+        """
+        Checks if match is over.
+        :return: True if the game state is in OVER.
+        """
+
+        return self.__game_state == Constants.OVER
+
     def __update_match(self, clock, surface):
         """
         Updates the match itself, handling game object interactions, player

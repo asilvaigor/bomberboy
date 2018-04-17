@@ -1,6 +1,6 @@
-import numpy as np
-
+from source.core.ai.Agent import Agent
 from source.core.game_objects.character.Character import Character
+from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
 
 
@@ -19,8 +19,12 @@ class Cpu(Character):
         """
 
         super().__init__(initial_tile, sprite_name, id)
+        self.__agent = Agent()
+        self.__counter = 0
+        self.__decision = CharacterEvents.NOTHING
 
-        self.__velocity = np.array([0, 0])
+        self.__initial_tile = initial_tile
+        self.__sprite_name = sprite_name
 
     def decide(self, tilemap, characters):
         """
@@ -34,7 +38,21 @@ class Cpu(Character):
             if c.id != self.id:
                 enemies_pos.append(c.tile)
 
-        # TODO: Make AI!!
+        if self.__counter < Constants.FRAME_UPDATE_RATE:
+            self.__counter += 1
+        else:
+            self.__agent.observe(tilemap, enemies_pos)
+            self.__decision = self.__agent.act()
+            self.__counter = 0
         if not (self._new_event == CharacterEvents.WIN or
                 self._new_event == CharacterEvents.DIE):
-            self._new_event = CharacterEvents.STOP_DOWN
+            self._new_event = self.__decision
+
+    def reset(self):
+        """
+        Resets the cpu to its initial position and state. This method is used
+        during training.
+        """
+
+        super().__init__(self.__initial_tile, self.__sprite_name, self.id)
+        self.__counter = 0

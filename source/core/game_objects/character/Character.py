@@ -53,6 +53,7 @@ class Character(GameObject):
             return False
 
         # Handles event variables
+        previous_event = self._event
         self._event = self._new_event
         if self._got_special_event:
             self._got_special_event = False
@@ -68,6 +69,15 @@ class Character(GameObject):
             self.__move((-1, 0), clock, tilemap)
         elif self._new_event == CharacterEvents.PLACE_BOMB:
             self._just_placed_bomb = True
+        elif self._new_event == CharacterEvents.NOTHING:
+            if previous_event == CharacterEvents.MOVE_LEFT:
+                self._event = CharacterEvents.STOP_LEFT
+            elif previous_event == CharacterEvents.MOVE_UP:
+                self._event = CharacterEvents.STOP_UP
+            elif previous_event == CharacterEvents.MOVE_RIGHT:
+                self._event = CharacterEvents.STOP_RIGHT
+            elif previous_event == CharacterEvents.MOVE_DOWN:
+                self._event = CharacterEvents.STOP_DOWN
 
         return True
 
@@ -185,6 +195,18 @@ class Character(GameObject):
         return (int((self._pose.y + self.__icon.get_size()[1] - 3 *
                      Constants.SQUARE_SIZE / 2 - 1) / Constants.SQUARE_SIZE),
                 int(self._pose.x / Constants.SQUARE_SIZE))
+
+    def set_tile(self, tile):
+        """
+        Setter for the character's tile.
+        :param tile:
+        """
+
+        self._pose.x = tile[1] * Constants.SQUARE_SIZE
+        self._pose.y = (tile[0] * Constants.SQUARE_SIZE -
+                        self.__icon.get_size()[1] + 1.5 * Constants.SQUARE_SIZE
+                        + 1)
+
 
     @property
     def fire_range(self):
@@ -386,7 +408,8 @@ class Character(GameObject):
                 self._event = CharacterEvents.STOP_LEFT
 
         # Walking towards best direction
-        self._pose.x += (direction[0] * self.__speed *
-                         Constants.SQUARE_SIZE / clock.get_fps())
-        self._pose.y += (direction[1] * self.__speed *
-                         Constants.SQUARE_SIZE / clock.get_fps())
+        if clock.get_fps() != 0:
+            self._pose.x += (direction[0] * self.__speed *
+                             Constants.SQUARE_SIZE / clock.get_fps())
+            self._pose.y += (direction[1] * self.__speed *
+                             Constants.SQUARE_SIZE / clock.get_fps())
