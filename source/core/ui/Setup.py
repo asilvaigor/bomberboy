@@ -25,7 +25,7 @@ class Setup:
         # Creating play button and arrows
         assets_path = (os.path.dirname(os.path.realpath(__file__)) +
                        '/../../../assets/')
-        font_size = int(1.5 * Constants.FONT_SIZE)
+        font_size = 45
         font = pygame.font.Font(assets_path + "font/04B_30__.TTF", font_size)
         self.__title_msg = font.render("Character Selection", True,
                                        Constants.RED)
@@ -37,21 +37,23 @@ class Setup:
         self.__left = pygame.transform.scale(self.__left, arrow_size)
 
         # Creating character selection blocks
-        error = 9
-        off = font_size + 15
+        self.__error = 9
+        off = Constants.WINDOW_HEIGHT * 0.1 - self.__error / 2
         self.__c1_selection = CharacterSelection(
             0, self.__sprites, 0, off,
             Constants.WINDOW_WIDTH * 0.5, Constants.WINDOW_HEIGHT * 0.4 + off)
         self.__c2_selection = CharacterSelection(
             1, self.__sprites, Constants.WINDOW_WIDTH * 0.5, off,
-            Constants.WINDOW_WIDTH - error, Constants.WINDOW_HEIGHT * 0.4 + off)
+            Constants.WINDOW_WIDTH - self.__error,
+            Constants.WINDOW_HEIGHT * 0.4 + off)
         self.__c3_selection = CharacterSelection(
             2, self.__sprites, 0, Constants.WINDOW_HEIGHT * 0.4 + off,
             Constants.WINDOW_WIDTH * 0.5, Constants.WINDOW_HEIGHT * 0.8 + off)
         self.__c4_selection = CharacterSelection(
             3, self.__sprites, Constants.WINDOW_WIDTH * 0.5,
             Constants.WINDOW_HEIGHT * 0.4 + off,
-            Constants.WINDOW_WIDTH - error, Constants.WINDOW_HEIGHT * 0.8 + off)
+            Constants.WINDOW_WIDTH - self.__error,
+            Constants.WINDOW_HEIGHT * 0.8 + off)
 
         # Variable which controls which block is currently selected
         self.__selection = 0
@@ -72,12 +74,12 @@ class Setup:
         self.__c4_selection.draw(surface)
 
         # Draws title
-        y = int(Constants.WINDOW_HEIGHT * 0.02)
+        y = int(Constants.WINDOW_HEIGHT * 0.02) + 1
         surface.blit(self.__title_msg, (Constants.WINDOW_WIDTH / 2 -
                                         self.__title_msg.get_rect().centerx, y))
 
         # Draws button and arrows, if necessary
-        y = int(Constants.WINDOW_HEIGHT * 0.91)
+        y = int(Constants.WINDOW_HEIGHT * 0.915)
         surface.blit(self.__play_msg, (
             Constants.WINDOW_WIDTH / 2 - self.__play_msg.get_rect().centerx, y))
 

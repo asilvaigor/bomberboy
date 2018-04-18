@@ -29,6 +29,7 @@ class Menu:
 
         # End page text
         self.___end_font = pygame.font.Font("assets/font/04B_30__.TTF", int(FONT_SIZE / 1.4))
+        self.___end_font.set_italic(True)
         self.__institution = self.___end_font.render("2018 - ITA", True, RED)
         self.__authors = self.___end_font.render("Heladio, Igor, Jose Otavio", True, RED)
 
@@ -51,7 +52,7 @@ class Menu:
         surface.blit(self.__logo, logo_position)
 
         # Draw menu buttons
-        y = int(surface.get_rect().centery + 2 * FONT_SIZE)
+        y = int(surface.get_rect().centery + 3.2 * FONT_SIZE)
         text = [self.__play, self.__exit]
         for t in text:
             position = (surface.get_rect().centerx - t.get_rect().centerx, y)
@@ -94,7 +95,7 @@ class Menu:
     def draw_arrow(self, surface):
         x_r = surface.get_rect().centerx - 3 * self.__right.get_rect().centerx
         x_l = surface.get_rect().centerx + self.__right.get_rect().centerx
-        y_0 = int(surface.get_rect().centery + 2 * FONT_SIZE)
+        y_0 = int(surface.get_rect().centery + 3.2 * FONT_SIZE)
         delta_y = FONT_SIZE + int(WINDOW_HEIGHT * 0.05)
 
         if self.__state == PLAY:

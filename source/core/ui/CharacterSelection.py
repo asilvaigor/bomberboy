@@ -38,8 +38,9 @@ class CharacterSelection:
         # Loading font and arrows
         assets_path = (os.path.dirname(os.path.realpath(__file__)) +
                        '/../../../assets/')
-        size = int(0.7 * Constants.FONT_SIZE)
+        size = 20
         self.__font = pygame.font.Font(assets_path + "font/04B_30__.TTF", size)
+        self.__font.set_italic(True)
         self.__right = pygame.image.load(assets_path + "image/left_arrow.png")
         self.__left = pygame.image.load(assets_path + "image/right_arrow.png")
         self.__right = pygame.transform.scale(self.__right, (size, size))
@@ -66,7 +67,7 @@ class CharacterSelection:
         self.__msg_w = 0.32 * self.__width
         self.__msg1_h = 0.3 * self.__height
         self.__msg2_h = 0.4 * self.__height
-        self.__msg3_h = 0.6 * self.__height
+        self.__msg3_h = 0.7 * self.__height - size
 
     def draw(self, surface):
         """
@@ -79,10 +80,12 @@ class CharacterSelection:
         delta = 10
         rect = (self.__xi + delta, self.__yi + delta,
                 self.__width - delta, self.__height - delta)
-        if self.__selection == self.__id:
-            color = Constants.GREEN
-        else:
+        if self.__selection < self.__id:
             color = Constants.GRAY
+        elif self.__selection == self.__id:
+            color = Constants.YELLOW
+        else:
+            color = Constants.LIGHT_GREEN
         self.__rounded_rect(surface, rect, color, 0.1)
 
         if self.__type_index == Constants.NONE:
