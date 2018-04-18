@@ -119,8 +119,9 @@ class Match:
 
         # Decides IA's moves
         for cpu in self.__cpus:
-            cpu.decide(self.__map.get_grid().get_tilemap(),
-                       self.__players + self.__cpus)
+            if cpu.is_alive:
+                cpu.decide(self.__map.get_grid().get_tilemap(),
+                           self.__players + self.__cpus, clock)
 
         # Updates and draws bombs
         for bomb in self.__bombs:

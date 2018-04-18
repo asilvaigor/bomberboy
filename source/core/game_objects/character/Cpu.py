@@ -20,19 +20,20 @@ class Cpu(Character):
 
         super().__init__(initial_tile, sprite_name, id)
         self.__agent = Agent()
-        self.__frame_counter = 0
+        self.__delay_counter = 0
         self.__reward_counter = 0
         self.__decision = CharacterEvents.NOTHING
 
         self.__initial_tile = initial_tile
         self.__sprite_name = sprite_name
 
-    def decide(self, tilemap, characters):
+    def decide(self, tilemap, characters, clock):
         """
         Decides the IA next move. This method limits the IA thinking decision to
         every k frames.
         :param tilemap: Numpy array with the map information.
         :param characters: List of characters in the match.
+        :param clock: Pygame clock.
         """
 
         enemies_pos = list()
@@ -40,13 +41,13 @@ class Cpu(Character):
             if c.id != self.id:
                 enemies_pos.append(c.tile)
 
-        if self.__frame_counter < Constants.FRAME_UPDATE_RATE:
-            self.__frame_counter += 1
-        else:
+        self.__delay_counter += clock.get_time()
+        if self.__delay_counter > Constants.UPDATE_DELAY:
             self.__decision = self.__agent.decide(tilemap, enemies_pos,
                                                   self.__reward_counter)
-            self.__frame_counter = 0
+            self.__delay_counter -= Constants.UPDATE_DELAY
             self.__reward_counter = 0
+            print(clock.get_fps())
         if not (self._new_event == CharacterEvents.WIN or
                 self._new_event == CharacterEvents.DIE):
             self._new_event = self.__decision
@@ -58,7 +59,7 @@ class Cpu(Character):
         """
 
         super().__init__(self.__initial_tile, self.__sprite_name, self.id)
-        self.__frame_counter = 0
+        self.__delay_counter = 0
 
     def reward(self, reward):
         """

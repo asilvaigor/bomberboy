@@ -21,6 +21,7 @@ Constants.SPEED_INCREMENT *= Constants.TIME_SPEEDER
 Constants.MAX_SPEED *= Constants.TIME_SPEEDER
 Constants.BOMB_FRAME_DURATION /= Constants.TIME_SPEEDER
 Constants.FIRE_FRAME_DURATION /= Constants.TIME_SPEEDER
+Constants.UPDATE_DELAY /= Constants.TIME_SPEEDER
 
 # Initiating pygame
 pygame.init()
