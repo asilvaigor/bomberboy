@@ -247,7 +247,6 @@ class Fire(GameObject):
         if np.any(tilemap[tile] == self.destroyable_block):
             branch.append(self.__explosion_animation)
             tilemap[tile] = Constants.UNIT_DESTROYING_BLOCK
-            self.__reward += Constants.BLOCK_REWARD
         elif np.any(tilemap[tile] == self.powerups_hidden):
             branch.append(self.__explosion_animation)
             if tilemap[tile] == Constants.UNIT_POWERUP_VELOCITY_HIDE:
@@ -260,11 +259,9 @@ class Fire(GameObject):
                 self.__destroyed_powerups.append(
                     (tile, Constants.UNIT_POWERUP_BOMB_SHOW))
             tilemap[tile] = Constants.UNIT_DESTROYING_BLOCK
-            self.__reward += Constants.BLOCK_REWARD
         elif np.any(tilemap[tile] == self.powerups_showed):
             branch.append(self.__explosion_animation)
             tilemap[tile] = Constants.UNIT_DESTROYING_POWERUP
-            self.__reward += Constants.POWERUP_DESTROYED_REWARD
 
     def __remove_fire(self, tilemap):
         """

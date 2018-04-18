@@ -47,7 +47,6 @@ class Cpu(Character):
                                                   self.__reward_counter)
             self.__delay_counter -= Constants.UPDATE_DELAY
             self.__reward_counter = 0
-            print(clock.get_fps())
         if not (self._new_event == CharacterEvents.WIN or
                 self._new_event == CharacterEvents.DIE):
             self._new_event = self.__decision
@@ -60,6 +59,15 @@ class Cpu(Character):
 
         super().__init__(self.__initial_tile, self.__sprite_name, self.id)
         self.__delay_counter = 0
+
+    @property
+    def reward(self):
+        """
+        Getter for the current reward.
+        :return: Cpus current reward.
+        """
+
+        return self.__reward_counter
 
     def reward(self, reward):
         """

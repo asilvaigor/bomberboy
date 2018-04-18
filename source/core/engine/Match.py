@@ -119,7 +119,7 @@ class Match:
 
         # Decides IA's moves
         for cpu in self.__cpus:
-            if cpu.is_alive:
+            if cpu.is_alive or cpu.reward != 0:
                 cpu.decide(self.__map.get_grid().get_tilemap(),
                            self.__players + self.__cpus, clock)
 
