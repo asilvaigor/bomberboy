@@ -37,15 +37,12 @@ sprites = SpriteHandler().sprites
 characters = (list(), list())
 positions = [(1, 1), (1, 13), (9, 1), (9, 13)]
 for i in range(len(positions)):
-    if not LOAD:
-        characters[1].append(Cpu(positions[i], sprites[Constants.colors[0]], i))
-    else:
-        characters[1].append(
-            Cpu(positions[i], sprites[Constants.colors[0]], i, True))
+    characters[1].append(
+        Cpu(positions[i], sprites[Constants.colors[0]], i, True, LOAD))
 
 # Game loop
 match_id = 0
-while match_id < 5000:
+while 1:
     match = Match(characters, sprites)
 
     state = Constants.STATE_PLAYING
@@ -55,10 +52,11 @@ while match_id < 5000:
             match.play(clock, surface)
         except:
             break
-        pygame.display.update()
+        if VISUALIZE:
+            pygame.display.update()
         clock.tick()
 
-    print("Match", match_id, "completed. Duration:", time.time() - t)
+    print("Match", match_id, "completed. Duration:", time.time() - t, "fps:", clock.get_fps())
     match_id += 1
 
     for c in characters[1]:
