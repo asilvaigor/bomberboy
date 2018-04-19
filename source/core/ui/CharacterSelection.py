@@ -253,7 +253,7 @@ class CharacterSelection:
                 Constants.colors[self.__color_index]], keys, self.__id)
         elif self.__type_index == Constants.CPU:
             return Cpu(pos, self.__sprites[
-                Constants.colors[self.__color_index]], self.__id)
+                Constants.colors[self.__color_index]], self.__id, True)
         else:
             return None
 

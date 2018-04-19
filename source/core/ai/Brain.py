@@ -1,5 +1,6 @@
 import keras
 import numpy as np
+import os
 import random
 
 from source.core.ai.Memory import Memory
@@ -11,41 +12,55 @@ class Brain:
     Class which holds the neural network and performs the Q-Learning algorithm.
     """
 
-    def __init__(self):
+    def __init__(self, id, load=False):
         """
         Default constructor. It generates the neural network.
         Based on <https://becominghuman.ai/lets-build-an-atari-ai-part-1-dqn-
         df57e8ff3b26>
+        :param id: Character's id.
+        :param load: Optional bool to load a neural network instead of
+        creating a new one.
         """
 
         self.__memory = Memory(Constants.MEMORY_SIZE)
-        self.__count = 0
+        self.__random_counter = 0
+        self.__save_counter = 0
+        self.__id = id
 
-        # Input
-        shape1 = (Constants.NUM_ROWS, Constants.NUM_COLUMNS)
-        tilemap_input = keras.layers.Input(shape1, name='tilemap')
-        tilemap_normalized = keras.layers.Lambda(
-            lambda x: 1.0 * x / Constants.NUM_UNITS)(tilemap_input)
+        if not load:
+            # Input
+            n_units = Constants.NUM_UNITS
+            shape1 = (Constants.NUM_ROWS, Constants.NUM_COLUMNS)
+            tilemap_input = keras.layers.Input(shape1, name='tilemap')
+            tilemap_normalized = keras.layers.Lambda(
+                lambda x: 1.0 * x / n_units)(tilemap_input)
 
-        # Hidden layers
-        conv = keras.layers.Conv1D(4, 4, activation='relu')(tilemap_normalized)
-        conv_flattened = keras.layers.Flatten()(conv)
-        hidden = keras.layers.Dense(64, activation='relu')(conv_flattened)
+            # Hidden layers
+            conv = keras.layers.Conv1D(4, 4, activation='relu')(
+                tilemap_normalized)
+            conv_flattened = keras.layers.Flatten()(conv)
+            hidden = keras.layers.Dense(64, activation='relu')(conv_flattened)
 
-        # Output
-        output = keras.layers.Dense(Constants.NUM_ACTIONS)(hidden)
+            # Output
+            output = keras.layers.Dense(Constants.NUM_ACTIONS)(hidden)
 
-        # Applying mask
-        shape2 = (Constants.NUM_ACTIONS,)
-        actions_input = keras.layers.Input(shape2, name='mask')
-        filtered = keras.layers.Multiply()([output, actions_input])
+            # Applying mask
+            shape2 = (Constants.NUM_ACTIONS,)
+            actions_input = keras.layers.Input(shape2, name='mask')
+            filtered = keras.layers.Multiply()([output, actions_input])
 
-        # Model
-        self.__model = keras.Model(inputs=[tilemap_input, actions_input],
-                                   outputs=filtered)
-        optimizer = keras.optimizers.RMSprop(lr=Constants.LEARNING_RATE,
-                                             rho=0.95, epsilon=0.01)
-        self.__model.compile(optimizer, loss='mse')
+            # Model
+            self.__model = keras.Model(inputs=[tilemap_input, actions_input],
+                                       outputs=filtered)
+            optimizer = keras.optimizers.RMSprop(lr=Constants.LEARNING_RATE,
+                                                 rho=0.95, epsilon=0.01)
+            self.__model.compile(optimizer, loss=self.__huber_loss)
+        else:
+            path = (os.path.dirname(os.path.realpath(__file__)) +
+                    '/../../../assets/save/ai_model' + str(self.__id))
+            self.__model = keras.models.load_model(path, custom_objects={
+                '__huber_loss': self.__huber_loss})
+        self.__target_model = self.__copy_model()
 
     def think(self, tilemap, reward, died):
         """
@@ -63,9 +78,11 @@ class Brain:
 
         # Decides if it should take a random step or a predicted one, to avoid
         # model fitting in local maximums
-        self.__count += died
+        self.__random_counter += 1
+        self.__save_counter += 1
         if random.random() < max(Constants.RANDOM_ACTION_PROBABILITY,
-                                 1 - 0.001 * self.__count):
+                                 1 - self.__random_counter *
+                                 Constants.RANDOM_SLOPE):
             action = random.randint(0, Constants.NUM_ACTIONS - 1)
         else:
             action = np.argmax(
@@ -100,7 +117,7 @@ class Brain:
         died = element[4]
 
         # Calculating Q
-        next_qs = self.__model.predict([states, np.ones(actions.shape)])
+        next_qs = self.__target_model.predict([states, np.ones(actions.shape)])
         next_qs[died] = 0
         qs = rewards + Constants.GAMMA * np.max(next_qs, axis=1)
 
@@ -108,3 +125,41 @@ class Brain:
         self.__model.fit(
             [previous_states, actions], actions * qs[:, None],
             nb_epoch=1, batch_size=len(previous_states), verbose=0)
+
+        # Updating target model
+        if self.__save_counter == Constants.MODEL_UPDATE_COUNTER:
+            self.__target_model = self.__copy_model()
+            self.__save_counter = 0
+
+    def __copy_model(self):
+        """
+        Saves a copy of the current model and returns it. This should be used
+        for saving the model and for updating the Q function being fitted.
+        :return: Copied model.
+        """
+
+        path = (os.path.dirname(os.path.realpath(__file__)) +
+                '/../../../assets/save/ai_model' + str(self.__id))
+        self.__model.save(path)
+        print('Just saved model', self.__id, '!')
+        return keras.models.load_model(path, custom_objects={
+            '__huber_loss': self.__huber_loss})
+
+    @staticmethod
+    def __huber_loss(a, b, in_keras=True):
+        """
+        Defines a huber loss function, which is proved to be better than mse.
+        :param a: First element array.
+        :param b: Second element array.
+        :param in_keras: Bool if in keras.
+        :return: Error.
+        """
+
+        error = a - b
+        quadratic_term = error * error / 2
+        linear_term = abs(error) - 1 / 2
+        use_linear_term = (abs(error) > 1.0)
+        if in_keras:
+            use_linear_term = keras.backend.cast(use_linear_term, 'float32')
+        return use_linear_term * linear_term + (
+                1 - use_linear_term) * quadratic_term

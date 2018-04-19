@@ -12,16 +12,18 @@ class Cpu(Character):
     Character class.
     """
 
-    def __init__(self, initial_tile, sprite_name, id):
+    def __init__(self, initial_tile, sprite_name, id, load=False):
         """
         Default constructor for the character.
         :param initial_tile: Initial tile coordinates for the character.
         :param sprite_name: String to select the character sprite.
         :param id: Character's id.
+        :param load: Optional bool to load a neural network instead of
+        creating a new one.
         """
 
         super().__init__(initial_tile, sprite_name, id)
-        self.__agent = Agent()
+        self.__agent = Agent(id, load)
         self.__delay_counter = 0
         self.__reward_counter = 0
         self.__decision = CharacterEvents.NOTHING

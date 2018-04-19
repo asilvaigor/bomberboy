@@ -15,6 +15,7 @@ visualization and controlling game speed.
 
 # Script constants
 VISUALIZE = True
+LOAD = True
 Constants.TIME_SPEEDER = 3
 Constants.INITIAL_SPEED *= Constants.TIME_SPEEDER
 Constants.SPEED_INCREMENT *= Constants.TIME_SPEEDER
@@ -22,7 +23,6 @@ Constants.MAX_SPEED *= Constants.TIME_SPEEDER
 Constants.BOMB_FRAME_DURATION /= Constants.TIME_SPEEDER
 Constants.FIRE_FRAME_DURATION /= Constants.TIME_SPEEDER
 Constants.UPDATE_DELAY /= Constants.TIME_SPEEDER
-Constants.INITIAL_DELAY /= Constants.TIME_SPEEDER
 
 # Initiating pygame
 pygame.init()
@@ -37,7 +37,11 @@ sprites = SpriteHandler().sprites
 characters = (list(), list())
 positions = [(1, 1), (1, 13), (9, 1), (9, 13)]
 for i in range(len(positions)):
-    characters[1].append(Cpu(positions[i], sprites[Constants.colors[0]], i))
+    if not LOAD:
+        characters[1].append(Cpu(positions[i], sprites[Constants.colors[0]], i))
+    else:
+        characters[1].append(
+            Cpu(positions[i], sprites[Constants.colors[0]], i, True))
 
 # Game loop
 match_id = 0
@@ -47,7 +51,10 @@ while match_id < 5000:
     state = Constants.STATE_PLAYING
     t = time.time()
     while not match.is_over():
-        match.play(clock, surface)
+        try:
+            match.play(clock, surface)
+        except:
+            break
         pygame.display.update()
         clock.tick()
 

@@ -7,12 +7,15 @@ class Agent:
     Class which does the interface between the Cpu and the Q-Learning classes.
     """
 
-    def __init__(self):
+    def __init__(self, id, load=False):
         """
         Default constructor.
+        :param id: Cpu's id.
+        :param load: Optional bool to load a neural network instead of
+        creating a new one.
         """
 
-        self.__brain = Brain()
+        self.__brain = Brain(id, load)
 
     def decide(self, tilemap, reward, died):
         """
