@@ -13,3 +13,11 @@ multiplayer Bomberman game.
         ├── core              # Game core.
         └── tests             # Testing scripts.
 ```
+
+## Dependencies
+- Pygame
+- Numpy
+- OpenCV
+- Keras
+- Tensorflow
+- H5py
