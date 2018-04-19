@@ -1,7 +1,7 @@
 import pygame
 import time
 
-from source.core.ai.SurfaceStub import SurfaceStub
+from source.tests.ai.SurfaceStub import SurfaceStub
 from source.core.engine.Match import Match
 from source.core.game_objects.character.Cpu import Cpu
 from source.core.utils import Constants
@@ -22,6 +22,7 @@ Constants.MAX_SPEED *= Constants.TIME_SPEEDER
 Constants.BOMB_FRAME_DURATION /= Constants.TIME_SPEEDER
 Constants.FIRE_FRAME_DURATION /= Constants.TIME_SPEEDER
 Constants.UPDATE_DELAY /= Constants.TIME_SPEEDER
+Constants.INITIAL_DELAY /= Constants.TIME_SPEEDER
 
 # Initiating pygame
 pygame.init()

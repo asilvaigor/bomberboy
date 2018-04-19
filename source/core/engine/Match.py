@@ -119,7 +119,7 @@ class Match:
 
         # Decides IA's moves
         for cpu in self.__cpus:
-            if cpu.is_alive or cpu.reward != 0:
+            if cpu.is_alive or cpu.get_reward() != 0:
                 cpu.decide(self.__map.get_grid().get_tilemap(),
                            self.__players + self.__cpus, clock)
 
@@ -146,10 +146,10 @@ class Match:
                     for bomb in self.__bombs:
                         if bomb.tile == tile:
                             bomb.explode()
-            else:
                 for cpu in self.__cpus:
                     if cpu.id == fire.id:
                         cpu.reward(fire.reward)
+            else:
                 self.__fires.remove(fire)
 
         # Updates and draws characters
@@ -173,6 +173,11 @@ class Match:
                         if cpu.id == i:
                             cpu.special_event(CharacterEvents.WIN)
             self.__game_state = Constants.OVER
+
+        if self.__game_state == Constants.OVER:
+            for cpu in self.__cpus:
+                cpu.decide(self.__map.get_grid().get_tilemap(),
+                           self.__players + self.__cpus, clock, True)
 
     def __update_pause_screen(self, surface):
         """

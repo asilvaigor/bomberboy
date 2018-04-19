@@ -1,3 +1,5 @@
+import numpy as np
+
 from source.core.ai.Agent import Agent
 from source.core.game_objects.character.Character import Character
 from source.core.utils import Constants
@@ -27,25 +29,33 @@ class Cpu(Character):
         self.__initial_tile = initial_tile
         self.__sprite_name = sprite_name
 
-    def decide(self, tilemap, characters, clock):
+    def decide(self, tilemap, characters, clock, force=False):
         """
         Decides the IA next move. This method limits the IA thinking decision to
         every k frames.
         :param tilemap: Numpy array with the map information.
         :param characters: List of characters in the match.
         :param clock: Pygame clock.
+        :param force: Forces the cpu to decide something, independent on its
+        delay counter.
         """
 
-        enemies_pos = list()
+        # Finding enemies positions
+        input = np.array(tilemap)
         for c in characters:
-            if c.id != self.id:
-                enemies_pos.append(c.tile)
+            if c.id == self.id:
+                input[c.tile] = Constants.UNIT_SELF
+            else:
+                input[c.tile] = Constants.UNIT_ENEMY
 
+        # Adjusting IA decision delay time
         self.__delay_counter += clock.get_time()
-        if self.__delay_counter > Constants.UPDATE_DELAY:
-            self.__decision = self.__agent.decide(tilemap, enemies_pos,
-                                                  self.__reward_counter)
-            self.__delay_counter -= Constants.UPDATE_DELAY
+
+        # Updating IA
+        if self.__delay_counter > Constants.UPDATE_DELAY or force:
+            self.__decision = self.__agent.decide(input, self.__reward_counter,
+                                                  not self.is_alive)
+            self.__delay_counter %= Constants.UPDATE_DELAY
             self.__reward_counter = 0
         if not (self._new_event == CharacterEvents.WIN or
                 self._new_event == CharacterEvents.DIE):
@@ -60,8 +70,7 @@ class Cpu(Character):
         super().__init__(self.__initial_tile, self.__sprite_name, self.id)
         self.__delay_counter = 0
 
-    @property
-    def reward(self):
+    def get_reward(self):
         """
         Getter for the current reward.
         :return: Cpus current reward.
@@ -76,4 +85,5 @@ class Cpu(Character):
         :return:
         """
 
-        self.__reward_counter += reward
+        if self.is_alive:
+            self.__reward_counter += reward

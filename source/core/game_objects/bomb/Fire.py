@@ -44,6 +44,7 @@ class Fire(GameObject):
 
         self.__destroyed_powerups = list()
         self.__triggered_bombs = list()
+        self.__just_created = True
 
     def update(self, clock, tilemap):
         """
@@ -54,7 +55,13 @@ class Fire(GameObject):
         """
 
         if self.__middle_animation.done():
-            self.__remove_fire(tilemap)
+            def erase(t):
+                tilemap[t] = Constants.UNIT_EMPTY
+
+            self.__iterate(erase)
+
+            for powerup in self.__destroyed_powerups:
+                tilemap[powerup[0]] = powerup[1]
             return False
 
         # Clearing previous branches
@@ -140,6 +147,17 @@ class Fire(GameObject):
                 self.__destroy_tile(tile, self.__right_branch, tilemap)
                 break
 
+        # Rewarding cpu
+        if self.__just_created:
+            def r(t):
+                if tilemap[t] == Constants.UNIT_DESTROYING_BLOCK:
+                    self.__reward += Constants.BLOCK_REWARD
+                elif tilemap[t] == Constants.UNIT_DESTROYING_POWERUP:
+                    self.__reward += Constants.POWERUP_DESTROYED_REWARD
+
+            self.__iterate(r)
+            self.__just_created = False
+
         return True
 
     def draw(self, display):
@@ -202,15 +220,9 @@ class Fire(GameObject):
         :return: Fire's total reward.
         """
 
-        return self.__reward
-
-    def add_reward(self, reward):
-        """
-        Adds a reward to the fire.
-        :param reward: Reward to be added.
-        """
-
-        self.__reward += reward
+        aux = self.__reward
+        self.__reward = 0
+        return aux
 
     def contains(self, tile):
         """
@@ -224,7 +236,7 @@ class Fire(GameObject):
             if tile[1] == f[1]:
                 return True
             elif tile[1] < f[1] and f[1] - tile[1] <= len(self.__up_branch):
-                    return True
+                return True
             elif tile[1] - f[1] <= len(self.__down_branch):
                 return True
         elif tile[1] == f[1]:
@@ -263,35 +275,25 @@ class Fire(GameObject):
             branch.append(self.__explosion_animation)
             tilemap[tile] = Constants.UNIT_DESTROYING_POWERUP
 
-    def __remove_fire(self, tilemap):
+    def __iterate(self, function):
         """
-        Updates the tilemap, removing the fire.
-        :param tilemap: Tilemap array.
+        Iterates though all tiles in the fire, applying a function to each one.
+        :param function: Function to be applied.
         """
 
-        def update_reward(t):
-            if tilemap[t] == Constants.UNIT_DESTROYING_BLOCK:
-                self.__reward += Constants.BLOCK_REWARD
-            elif tilemap[t] == Constants.UNIT_DESTROYING_POWERUP:
-                self.__reward += Constants.POWERUP_DESTROYED_REWARD
-            tilemap[t] = Constants.UNIT_EMPTY
-
-        tilemap[self.tile] = Constants.UNIT_EMPTY
+        function(self.tile)
         for i in range(len(self.__up_branch)):
             tile = (self.tile[0] - i - 1, self.tile[1])
-            update_reward(tile)
+            function(tile)
         for i in range(len(self.__down_branch)):
             tile = (self.tile[0] + i + 1, self.tile[1])
-            update_reward(tile)
+            function(tile)
         for i in range(len(self.__left_branch)):
             tile = (self.tile[0], self.tile[1] - i - 1)
-            update_reward(tile)
+            function(tile)
         for i in range(len(self.__right_branch)):
             tile = (self.tile[0], self.tile[1] + i + 1)
-            update_reward(tile)
-
-        for powerup in self.__destroyed_powerups:
-            tilemap[powerup[0]] = powerup[1]
+            function(tile)
 
     def __setup_animations(self):
         """

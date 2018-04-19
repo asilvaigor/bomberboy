@@ -1,23 +1,38 @@
-from random import random
-
+from source.core.ai.Brain import Brain
 from source.core.utils.ObjectEvents import CharacterEvents
 
 
 class Agent:
-    def __init__(self):
-        pass
+    """
+    Class which does the interface between the Cpu and the Q-Learning classes.
+    """
 
-    def decide(self, tilemap, enemies_pos, reward):
-        x = random()
-        if x < 1 / 6:
+    def __init__(self):
+        """
+        Default constructor.
+        """
+
+        self.__brain = Brain()
+
+    def decide(self, tilemap, reward, died):
+        """
+        Decides the action to be executed provided the Q-Learning output.
+        :param tilemap: Numpy array with the map information.
+        :param reward: Reward the cpu got on the last iteration.
+        :param died: Bool to inform if the agent just died.
+        :return: A CharacterEvent.
+        """
+
+        x = self.__brain.think(tilemap, reward, died)
+        if x == 0:
             return CharacterEvents.NOTHING
-        elif x < 2 / 6:
+        elif x == 1:
             return CharacterEvents.PLACE_BOMB
-        elif x < 3 / 6:
+        elif x == 2:
             return CharacterEvents.MOVE_LEFT
-        elif x < 4 / 6:
+        elif x == 3:
             return CharacterEvents.MOVE_UP
-        elif x < 5 / 6:
+        elif x == 4:
             return CharacterEvents.MOVE_RIGHT
         else:
             return CharacterEvents.MOVE_DOWN
