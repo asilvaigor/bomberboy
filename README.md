@@ -18,6 +18,3 @@ multiplayer Bomberman game.
 - Pygame
 - Numpy
 - OpenCV
-- Keras
-- Tensorflow
-- H5py

@@ -1,6 +1,6 @@
 import numpy as np
 
-from source.core.ai.Agent import Agent
+# from source.core.ai.Agent import Agent
 from source.core.game_objects.character.Character import Character
 from source.core.utils import Constants
 from source.core.utils.ObjectEvents import CharacterEvents
@@ -25,7 +25,7 @@ class Cpu(Character):
         """
 
         super().__init__(initial_tile, sprite_name, id)
-        self.__agent = Agent(id, training, load, False)
+        # self.__agent = Agent(id, training, load, False)
         self.__delay_counter = 0
         self.__reward_counter = 0
         self.__decision = CharacterEvents.NOTHING
@@ -44,26 +44,27 @@ class Cpu(Character):
         delay counter.
         """
 
-        # Finding enemies positions
-        input = np.array(tilemap)
-        for c in characters:
-            if c.id == self.id:
-                input[c.tile] = Constants.UNIT_SELF
-            else:
-                input[c.tile] = Constants.UNIT_ENEMY
-
-        # Adjusting IA decision delay time
-        self.__delay_counter += clock.get_time()
-
-        # Updating IA
-        if self.__delay_counter > Constants.UPDATE_DELAY or force:
-            self.__decision = self.__agent.decide(input, self.__reward_counter,
-                                                  not self.is_alive)
-            self.__delay_counter %= Constants.UPDATE_DELAY
-            self.__reward_counter = 0
-        if not (self._new_event == CharacterEvents.WIN or
-                self._new_event == CharacterEvents.DIE):
-            self._new_event = self.__decision
+        # # Finding enemies positions
+        # input = np.array(tilemap)
+        # for c in characters:
+        #     if c.id == self.id:
+        #         input[c.tile] = Constants.UNIT_SELF
+        #     else:
+        #         input[c.tile] = Constants.UNIT_ENEMY
+        #
+        # # Adjusting IA decision delay time
+        # self.__delay_counter += clock.get_time()
+        #
+        # # Updating IA
+        # if self.__delay_counter > Constants.UPDATE_DELAY or force:
+        #     self.__decision = self.__agent.decide(input, self.__reward_counter,
+        #                                           not self.is_alive)
+        #     self.__delay_counter %= Constants.UPDATE_DELAY
+        #     self.__reward_counter = 0
+        # if not (self._new_event == CharacterEvents.WIN or
+        #         self._new_event == CharacterEvents.DIE):
+        #     self._new_event = self.__decision
+        self.__new_event = CharacterEvents.NOTHING
 
     def reset(self):
         """
