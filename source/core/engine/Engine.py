@@ -29,7 +29,8 @@ class Engine:
         pygame.display.set_caption(self.__game_name)
 
         # Loading basic assets
-        self.__song = pygame.mixer.Sound("assets/song/song.ogg")
+        self.__menu_song = pygame.mixer.Sound("assets/song/menu.ogg")
+        self.__game_song = pygame.mixer.Sound("assets/song/game.ogg")
         self.__sprites = SpriteHandler().sprites
 
         # Engine states
@@ -44,10 +45,13 @@ class Engine:
         screen modes.
         """
 
-        # self.__song.play(-1)
         while True:
             if self.__state == STATE_MENU:
                 if not self.__menu:  # Verify that the pointer is null
+
+                    self.__game_song.stop()  # Start the menu music
+                    self.__menu_song.play(-1)
+
                     self.__menu = Menu()
                     del self.__match
                     self.__match = None
@@ -66,6 +70,10 @@ class Engine:
 
             elif self.__state == STATE_PLAYING:
                 if not self.__match:  # Verify that the pointer is null
+
+                    self.__menu_song.stop() # Start the game music
+                    self.__game_song.play(1)
+
                     self.__match = Match(self.__setup.get_characters(),
                                          self.__sprites)
                     del self.__setup
