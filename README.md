@@ -1,6 +1,13 @@
 # BomberBoy
-BomberBoy game project for CES-22 course in ITA. It is a clone of the classic 
-multiplayer Bomberman game.
+BomberBoy is a game project developed in Python for CES-22 course in ITA. It is a clone of the classic 
+multiplayer Bomberman game, so it consists of up to four players battling by placing bombs and trying to explode their enemies. It features an AI which uses reinforcement learning (not working for now) This game was developed for learning purposes only.
+
+## Getting Started
+
+- Install numpy
+- Install Pygame
+- Install OpenCV for python
+- Run script bomberboy.py and play!
 
 ## Directory Structure
 
@@ -13,8 +20,3 @@ multiplayer Bomberman game.
         ├── core              # Game core.
         └── tests             # Testing scripts.
 ```
-
-## Dependencies
-- Pygame
-- Numpy
-- OpenCV
