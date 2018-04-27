@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import pygame
 
 from source.core.game_objects.GameObject import GameObject
 from source.core.ui.Animation import Animation
@@ -38,6 +39,8 @@ class Character(GameObject):
         self.__is_alive = True
 
         self.__setup_animations()
+        self.__assets_path = (os.path.dirname(os.path.realpath(__file__)) +
+                              '/../../../../assets/')
 
     def update(self, clock, tilemap=None):
         """
@@ -151,7 +154,15 @@ class Character(GameObject):
         self._got_special_event = True
 
         if event == CharacterEvents.DIE:
+            if self.__is_alive:
+                music_path = self.__assets_path + "song/die.wav"
+                music = pygame.mixer.Sound(music_path)
+                music.play(0)
             self.__is_alive = False
+        elif event == CharacterEvents.WIN:
+            music_path = self.__assets_path + "song/win.wav"
+            music = pygame.mixer.Sound(music_path)
+            music.play(0)
 
     def increase_speed(self):
         """
@@ -174,6 +185,10 @@ class Character(GameObject):
         self.__move_left_animation.set_durations(
             np.ones(2) / step_frequency)
 
+        music_path = self.__assets_path + "song/powerup_shoe.wav"
+        music = pygame.mixer.Sound(music_path)
+        music.play(0)
+
     def increase_fire(self):
         """
         Increases the character's fire range.
@@ -181,12 +196,20 @@ class Character(GameObject):
 
         self.__fire += Constants.FIRE_INCREMENT
 
+        music_path = self.__assets_path + "song/powerup_fire.wav"
+        music = pygame.mixer.Sound(music_path)
+        music.play(0)
+
     def increase_bomb(self):
         """
         Increases the character's maximum bomb limit.
         """
 
         self.__total_bombs += 1
+
+        music_path = self.__assets_path + "song/powerup_bomb.wav"
+        music = pygame.mixer.Sound(music_path)
+        music.play(0)
 
     @property
     def tile(self):
@@ -291,9 +314,9 @@ class Character(GameObject):
             if not np.any(obstacles == tilemap[y_tile - 1, x_tile]) and (
                     tilemap[y_tile - 1, x_tile] != bomb or
                     tilemap[self.tile] == bomb):
-                if sq * 0.45 < x % sq < sq * 0.55:
+                if sq * 0.35 < x % sq < sq * 0.65:
                     self._pose.x = (x_tile + 0.5) * sq
-                elif x % sq <= sq * 0.45:
+                elif x % sq <= sq * 0.35:
                     direction = (1, 0)
                     self._event = CharacterEvents.MOVE_RIGHT
                 else:
@@ -321,9 +344,9 @@ class Character(GameObject):
             if not np.any(obstacles == tilemap[y_tile + 1, x_tile]) and (
                     tilemap[y_tile + 1, x_tile] != bomb or
                     tilemap[self.tile] == bomb):
-                if sq * 0.45 < x % sq < sq * 0.55:
+                if sq * 0.35 < x % sq < sq * 0.65:
                     self._pose.x = (x_tile + 0.5) * sq
-                elif x % sq <= sq * 0.45:
+                elif x % sq <= sq * 0.35:
                     direction = (1, 0)
                     self._event = CharacterEvents.MOVE_RIGHT
                 else:
@@ -355,9 +378,9 @@ class Character(GameObject):
             if not np.any(obstacles == tilemap[y_tile, x_tile + 1]) and (
                     tilemap[y_tile, x_tile + 1] != bomb or
                     tilemap[self.tile] == bomb):
-                if sq * 0.45 < y % sq < sq * 0.55:
+                if sq * 0.35 < y % sq < sq * 0.65:
                     self._pose.y = (y_tile + 0.5) * sq
-                elif y % sq <= sq * 0.45:
+                elif y % sq <= sq * 0.35:
                     direction = (0, 1)
                     self._event = CharacterEvents.MOVE_DOWN
                 else:
@@ -386,9 +409,9 @@ class Character(GameObject):
             if not np.any(obstacles == tilemap[y_tile, x_tile - 1]) and (
                     tilemap[y_tile, x_tile - 1] != bomb or
                     tilemap[self.tile] == bomb):
-                if sq * 0.45 < y % sq < sq * 0.55:
+                if sq * 0.35 < y % sq < sq * 0.65:
                     self._pose.y = (y_tile + 0.5) * sq
-                elif y % sq <= sq * 0.45:
+                elif y % sq <= sq * 0.35:
                     direction = (0, 1)
                     self._event = CharacterEvents.MOVE_DOWN
                 else:

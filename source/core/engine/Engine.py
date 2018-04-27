@@ -21,6 +21,7 @@ class Engine:
         """
 
         # Pygame initialization
+        pygame.mixer.init(buffer=512)
         pygame.init()
         self.__clock = pygame.time.Clock()
         self.__game_name = GAME_NAME
@@ -50,6 +51,7 @@ class Engine:
                 if not self.__menu:  # Verify that the pointer is null
 
                     self.__game_song.stop()  # Start the menu music
+                    self.__menu_song.stop()
                     self.__menu_song.play(-1)
 
                     self.__menu = Menu()
@@ -71,7 +73,7 @@ class Engine:
             elif self.__state == STATE_PLAYING:
                 if not self.__match:  # Verify that the pointer is null
 
-                    self.__menu_song.stop() # Start the game music
+                    self.__menu_song.stop()  # Start the game music
                     self.__game_song.play(1)
 
                     self.__match = Match(self.__setup.get_characters(),

@@ -48,7 +48,7 @@ YELLOW = (184, 224, 134)
 
 # Character constants
 STEPS_PER_SQUARE = 2
-INITIAL_SPEED = 2.333 * TIME_SPEEDER  # Note: Speed is in squares per second.
+INITIAL_SPEED = 3.5 * TIME_SPEEDER  # Note: Speed is in squares per second.
 SPEED_INCREMENT = 0.666 * TIME_SPEEDER
 MAX_SPEED = 9 * TIME_SPEEDER
 INITIAL_FIRE = 2

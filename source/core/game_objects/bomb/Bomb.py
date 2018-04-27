@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import pygame
 
 from source.core.game_objects.GameObject import GameObject
 from source.core.ui.Animation import Animation
@@ -30,6 +31,13 @@ class Bomb(GameObject):
         self.__icon = self.__animation.update()
         self.__range = range
         self.__character_id = character_id
+
+        # Sound
+        self.__assets_path = (os.path.dirname(os.path.realpath(__file__)) +
+                              '/../../../../assets/')
+        music_path = self.__assets_path + "song/bomb_put.wav"
+        music = pygame.mixer.Sound(music_path)
+        music.play(0)
 
     def update(self, clock, tilemap):
         """

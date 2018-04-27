@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import pygame
 
 from source.core.game_objects.GameObject import GameObject
 from source.core.ui.Animation import Animation
@@ -32,6 +33,13 @@ class Fire(GameObject):
         """
 
         super().__init__(initial_tile, character_id)
+
+        # Sound
+        self.__assets_path = (os.path.dirname(os.path.realpath(__file__)) +
+                              '/../../../../assets/')
+        music_path = self.__assets_path + "song/bomb.wav"
+        music = pygame.mixer.Sound(music_path)
+        music.play(0)
 
         self.__sprite = sprite
         self.__range = fire_range

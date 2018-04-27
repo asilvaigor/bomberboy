@@ -36,13 +36,13 @@ class CharacterSelection:
         self.__option = 0
 
         # Loading font and arrows
-        assets_path = (os.path.dirname(os.path.realpath(__file__)) +
-                       '/../../../assets/')
+        self.__assets_path = (os.path.dirname(os.path.realpath(__file__)) +
+                              '/../../../assets/')
         size = 20
-        self.__font = pygame.font.Font(assets_path + "font/04B_30__.TTF", size)
+        self.__font = pygame.font.Font(self.__assets_path + "font/04B_30__.TTF", size)
         self.__font.set_italic(True)
-        self.__right = pygame.image.load(assets_path + "image/left_arrow.png")
-        self.__left = pygame.image.load(assets_path + "image/right_arrow.png")
+        self.__right = pygame.image.load(self.__assets_path + "image/left_arrow.png")
+        self.__left = pygame.image.load(self.__assets_path + "image/right_arrow.png")
         self.__right = pygame.transform.scale(self.__right, (size, size))
         self.__left = pygame.transform.scale(self.__left, (size, size))
 
@@ -115,7 +115,7 @@ class CharacterSelection:
         # Drawing type options
         if self.__type_index == Constants.WASD:
             type_msg1 = 'Player'
-            type_msg2 = '(WASD+C)'
+            type_msg2 = '(WASD+v)'
         elif self.__type_index == Constants.IJKL:
             type_msg1 = 'Player'
             type_msg2 = '(IJKL+B)'
@@ -186,6 +186,10 @@ class CharacterSelection:
                     # Handling block switching
                     if event.key == K_RETURN or event.key == K_KP_ENTER:
                         selection += 1
+                        if self.__type_index != Constants.NONE:
+                            music_path = self.__assets_path + "song/bomberboy_" + Constants.colors[self.__color_index] + ".wav"
+                            music = pygame.mixer.Sound(music_path)
+                            music.play(0)
                     elif event.key == K_BACKSPACE:
                         selection -= 1
                     elif event.key == K_ESCAPE:
